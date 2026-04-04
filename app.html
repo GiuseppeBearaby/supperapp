@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SupperApp">
+<title>SupperApp</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0d11;--card:#17171f;--card2:#1f1f2a;--card3:#272733;
+  --accent:#c9a84c;--accent-dim:rgba(201,168,76,.15);
+  --text:#f0ede6;--sub:#aaa8a0;--muted:#666;--border:#2a2a38;
+  --green:#45b87a;--green-dim:rgba(69,184,122,.15);
+  --red:#e05c5c;--red-dim:rgba(224,92,92,.15);
+  --blue:#5c9fe0;--blue-dim:rgba(92,159,224,.15);
+  --purple:#9b7fe8;--purple-dim:rgba(155,127,232,.15);
+  --tab-h:56px;
+  --si-top:env(safe-area-inset-top,0px);
+  --si-bot:env(safe-area-inset-bottom,0px);
+  --si-l:env(safe-area-inset-left,0px);
+  --si-r:env(safe-area-inset-right,0px);
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;--r-full:9999px;
+}
+html{height:100%;-webkit-overflow-scrolling:touch}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  font-size:15px;line-height:1.4;
+  min-height:100dvh;overflow-x:hidden;
+  padding-left:var(--si-l);padding-right:var(--si-r);
+}
+
+/* ââ AUTH SCREEN ââ */
+#auth-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+.auth-box{
+  width:100%;max-width:380px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:36px 28px 32px;
+  display:flex;flex-direction:column;align-items:center;
+}
+.auth-logo{font-size:52px;margin-bottom:12px;line-height:1}
+.auth-title{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:4px;text-align:center}
+.auth-sub{font-size:13px;color:var(--muted);margin-bottom:24px;text-align:center}
+.auth-inp{
+  width:100%;background:var(--card2);border:1.5px solid var(--border);
+  border-radius:14px;color:var(--text);font-size:16px;
+  padding:13px 16px;outline:none;font-family:inherit;
+  margin-bottom:12px;transition:border-color .2s;-webkit-appearance:none;
+}
+.auth-inp:focus{border-color:var(--accent)}
+.auth-inp.error{border-color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.auth-btn{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  background:var(--accent);color:#111;font-size:16px;font-weight:700;
+  cursor:pointer;font-family:inherit;margin-top:4px;transition:opacity .15s;
+}
+.auth-btn:active{opacity:.7}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed}
+.auth-err{font-size:13px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
+.auth-link{font-size:13px;color:var(--accent);margin-top:16px;cursor:pointer;text-align:center}
+.auth-link:hover{text-decoration:underline}
+.auth-divider{width:100%;height:1px;background:var(--border);margin:20px 0}
+.auth-google{
+  width:100%;padding:13px;border-radius:14px;
+  background:var(--card2);border:1.5px solid var(--border);
+  color:var(--text);font-size:15px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:border-color .15s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.auth-google:hover{border-color:var(--accent)}
+
+/* ââ LOADING ââ */
+#loading-screen{
+  position:fixed;inset:0;z-index:10000;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;
+}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ââ SCROLLBAR ââ */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ââ LAYOUT ââ */
+.app{display:none;flex-direction:column;min-height:100dvh}
+.app.active{display:flex}
+.page{display:none;flex:1;overflow-y:auto;padding:0 0 calc(var(--tab-h) + var(--si-bot) + 16px)}
+.page.active{display:flex;flex-direction:column}
+.page-inner{flex:1;padding:0 16px}
+
+/* ââ TOP BAR ââ */
+.topbar{
+  padding:calc(var(--si-top) + 14px) 16px 12px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  background:var(--bg);position:sticky;top:0;z-index:50;
+  border-bottom:1px solid var(--border);
+}
+.topbar-left h1{font-size:22px;font-weight:700;color:var(--accent);letter-spacing:-.3px}
+.topbar-left .sub{font-size:12px;color:var(--muted);margin-top:1px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{
+  width:36px;height:36px;border-radius:var(--r12);
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--text);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .15s;
+}
+.icon-btn:active{background:var(--card3)}
+
+/* ââ TAB BAR ââ */
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--tab-h) + var(--si-bot));
+  background:rgba(13,13,17,.92);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:none;align-items:flex-start;
+  z-index:100;padding:0 var(--si-l);padding-right:var(--si-r);
+}
+.tabbar.active{display:flex}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;cursor:pointer;color:var(--muted);font-size:9.5px;font-weight:600;
+  letter-spacing:.2px;padding:8px 2px 0;height:var(--tab-h);
+  transition:color .15s;text-transform:uppercase;
+}
+.tab .ico{font-size:20px;line-height:1;transition:transform .2s}
+.tab.active{color:var(--accent)}
+.tab.active .ico{transform:scale(1.1)}
+
+/* ââ CARDS ââ */
+.card{background:var(--card);border-radius:var(--r16);padding:16px;margin-bottom:10px;border:1px solid var(--border)}
+.card-sm{background:var(--card2);border-radius:var(--r12);padding:12px 14px;margin-bottom:8px;border:1px solid var(--border)}
+.card-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+
+/* ââ KPI ââ */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.kpi{background:var(--card);border-radius:var(--r16);padding:14px 16px;border:1px solid var(--border)}
+.kpi-val{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-lbl{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ââ BUTTONS ââ */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:13px 16px;border-radius:var(--r16);border:none;
+  font-size:15px;font-weight:700;cursor:pointer;letter-spacing:-.1px;
+  transition:opacity .1s,transform .1s;white-space:nowrap;font-family:inherit;
+}
+.btn:active{opacity:.75;transform:scale(.98)}
+.btn-gold{background:var(--accent);color:#111}
+.btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+.btn-ghost{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:var(--r12)}
+.btn-xs{padding:6px 12px;font-size:12px;border-radius:var(--r8)}
+.btn-row{display:flex;gap:8px;margin-top:14px}
+.btn-row .btn{flex:1}
+
+/* ââ FORM ââ */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;background:var(--card2);border:1.5px solid var(--border);
+  border-radius:var(--r12);color:var(--text);font-size:15px;
+  padding:11px 14px;outline:none;font-family:inherit;
+  -webkit-appearance:none;appearance:none;transition:border-color .15s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{min-height:72px;resize:none;line-height:1.5}
+.form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ââ STEPPER ââ */
+.wiz-steps{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px}
+.wiz-dot{width:8px;height:8px;border-radius:var(--r-full);background:var(--border);transition:all .25s}
+.wiz-dot.active{background:var(--accent);width:22px;border-radius:4px}
+.wiz-dot.done{background:var(--green)}
+.wiz-label{text-align:center;font-size:12px;color:var(--sub);margin-bottom:16px;font-weight:600}
+
+/* ââ BOTTOM SHEET ââ */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;
+  display:none;align-items:flex-end;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+}
+.overlay.show{display:flex}
+.sheet{
+  background:var(--card);border-radius:22px 22px 0 0;width:100%;
+  max-height:94dvh;overflow-y:auto;
+  padding:0 16px calc(20px + var(--si-bot));-webkit-overflow-scrolling:touch;
+}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 18px}
+.sheet-title{font-size:20px;font-weight:700;margin-bottom:18px;padding-right:40px}
+
+/* ââ CALENDAR ââ */
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:4px 0 16px}
+.cal-header h2{font-size:18px;font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-size:10px;color:var(--muted);font-weight:700;padding:4px 0;text-transform:uppercase}
+.cal-day{aspect-ratio:1;border-radius:var(--r8);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:600;gap:2px;transition:background .1s;position:relative}
+.cal-day.empty{cursor:default}
+.cal-day:not(.empty):hover{background:var(--card2)}
+.cal-day.today{box-shadow:0 0 0 1.5px var(--accent)}
+.cal-day.open{background:var(--accent-dim);color:var(--accent)}
+.cal-day.soldout{background:var(--red-dim);color:var(--red)}
+.cal-day.confirmed{background:var(--green-dim);color:var(--green)}
+.cal-dot{width:4px;height:4px;border-radius:var(--r-full)}
+.cal-dot.open{background:var(--accent)}
+.cal-dot.soldout{background:var(--red)}
+.cal-dot.confirmed{background:var(--green)}
+.cal-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sub)}
+.leg-dot{width:7px;height:7px;border-radius:var(--r-full)}
+
+/* ââ STATUS PILLS ââ */
+.status-row{display:flex;gap:6px}
+.status-pill{flex:1;padding:9px 6px;text-align:center;border-radius:var(--r12);background:var(--card2);border:1.5px solid transparent;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-open{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.sp-soldout{border-color:var(--red);background:var(--red-dim);color:var(--red)}
+.sp-confirmed{border-color:var(--green);background:var(--green-dim);color:var(--green)}
+
+/* ââ NUM STEPPER ââ */
+.num-row{display:flex;align-items:center;gap:0;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);overflow:hidden;height:44px}
+.num-row button{width:44px;height:44px;background:transparent;border:none;color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.num-row button:active{background:var(--card3)}
+.num-row input{flex:1;text-align:center;background:transparent;border:none;color:var(--text);font-size:17px;font-weight:700;outline:none;min-width:0;padding:0;font-family:inherit}
+
+/* ââ GUEST WIZARD ââ */
+.gwiz{background:var(--card2);border-radius:var(--r16);padding:14px;margin-bottom:10px;border:1px solid var(--border)}
+.gwiz-name{font-size:15px;font-weight:700;margin-bottom:3px}
+.gwiz-meta{font-size:11px;color:var(--muted);margin-bottom:2px}
+.gwiz-restrict{font-size:12px;color:var(--red);margin-bottom:10px;margin-top:2px}
+.gwiz-section{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:10px 0 6px}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px}
+.pill{background:var(--card3);border-radius:var(--r-full);padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid transparent;white-space:nowrap}
+.pill-gold{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.pill-blue{border-color:var(--blue);background:var(--blue-dim);color:var(--blue)}
+.pill-purple{border-color:var(--purple);background:var(--purple-dim);color:var(--purple)}
+.pill-green{border-color:var(--green);background:var(--green-dim);color:var(--green)}
+.paid-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--sub);cursor:pointer}
+.paid-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);cursor:pointer;flex-shrink:0}
+.disc-inp{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r8);color:var(--text);font-size:14px;padding:8px 12px;margin-top:6px;outline:none;font-family:inherit}
+.disc-inp:focus{border-color:var(--blue)}
+
+/* ââ GUEST PICK ââ */
+.pick-search{position:relative;margin-bottom:10px}
+.pick-search input{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:15px;padding:10px 14px 10px 38px;outline:none;font-family:inherit;transition:border-color .15s}
+.pick-search input:focus{border-color:var(--accent)}
+.pick-search::before{content:'ð';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px}
+.pick-list{max-height:180px;overflow-y:auto;border-radius:var(--r12);background:var(--card2);border:1px solid var(--border)}
+.pick-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.pick-item:last-child{border-bottom:none}
+.pick-item:active{background:var(--card3)}
+.pick-name{font-size:14px;font-weight:600}
+.pick-meta{font-size:11px;color:var(--muted);margin-top:1px}
+.pick-check{width:22px;height:22px;border-radius:var(--r-full);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;background:transparent;transition:all .15s}
+.pick-check.on{background:var(--accent);border-color:var(--accent);color:#111}
+
+/* ââ COSTS ââ */
+.cost-item{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.cost-item:last-child{border-bottom:none}
+.cost-info{flex:1;min-width:0}
+.cost-cat{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.cost-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cost-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.cost-amt{font-size:14px;font-weight:700;color:var(--accent)}
+.cost-del{font-size:18px;color:var(--red);cursor:pointer;padding:4px;display:flex;align-items:center}
+.cost-add-row{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:8px}
+.cost-add-row2{display:flex;gap:8px;margin-bottom:12px}
+.cost-add-row2 input{flex:1}
+.cost-add-row input,.cost-add-row select{background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:14px;padding:10px 12px;outline:none;font-family:inherit;-webkit-appearance:none}
+.cost-add-row2 input{background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:14px;padding:10px 12px;outline:none;font-family:inherit}
+
+/* ââ P&L ââ */
+.pnl-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.pnl-row:last-child{border-bottom:none}
+.pnl-row.total{font-weight:700;font-size:16px;padding-top:10px}
+.pnl-pos{color:var(--green)}.pnl-neg{color:var(--red)}.pnl-purple{color:var(--purple)}
+
+/* ââ BADGE ââ */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:var(--r-full);font-size:11px;font-weight:700;flex-shrink:0}
+.bg-gold{background:var(--accent-dim);color:var(--accent)}
+.bg-green{background:var(--green-dim);color:var(--green)}
+.bg-red{background:var(--red-dim);color:var(--red)}
+.bg-blue{background:var(--blue-dim);color:var(--blue)}
+.bg-purple{background:var(--purple-dim);color:var(--purple)}
+.bg-sub{background:var(--card2);color:var(--sub)}
+
+/* ââ EVENT CARD ââ */
+.ev-card{background:var(--card);border-radius:var(--r16);padding:16px;margin-bottom:10px;cursor:pointer;border:1px solid var(--border);transition:border-color .15s}
+.ev-card:active{border-color:var(--accent)}
+.ev-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:8px}
+.ev-date{font-size:16px;font-weight:700;flex:1;min-width:0}
+.ev-name{font-size:12px;color:var(--muted);margin-top:2px}
+.ev-stats{display:flex;gap:0;border-top:1px solid var(--border);padding-top:12px}
+.ev-stat{flex:1;text-align:center;padding:0 4px;border-right:1px solid var(--border)}
+.ev-stat:last-child{border-right:none}
+.ev-stat-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:3px}
+.ev-stat-val{font-size:14px;font-weight:700}
+
+/* ââ GUEST CARD ââ */
+.guest-card{background:var(--card);border-radius:var(--r16);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1px solid var(--border);transition:border-color .15s}
+.guest-card:active{border-color:var(--accent)}
+.g-av{width:42px;height:42px;border-radius:var(--r-full);background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--border)}
+.g-name{font-size:15px;font-weight:700}
+.g-meta{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-restrict{font-size:12px;color:var(--red);margin-top:2px}
+
+/* ââ AI CHAT ââ */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100dvh - var(--tab-h) - var(--si-bot) - 62px - var(--si-top) - 14px);min-height:300px}
+.chat-messages{flex:1;overflow-y:auto;padding:8px 0 4px;-webkit-overflow-scrolling:touch}
+.chat-msg{display:flex;gap:8px;margin-bottom:12px;align-items:flex-end}
+.chat-msg.user{flex-direction:row-reverse}
+.bubble{max-width:78%;padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.5;word-break:break-word}
+.chat-msg.ai .bubble{background:var(--card);border-bottom-left-radius:4px;border:1px solid var(--border)}
+.chat-msg.user .bubble{background:var(--accent);color:#111;font-weight:600;border-bottom-right-radius:4px}
+.chat-av{width:28px;height:28px;border-radius:var(--r-full);background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:1px solid var(--border)}
+.chat-bar{display:flex;gap:8px;align-items:center;padding-top:8px;background:var(--bg);border-top:1px solid var(--border)}
+.chat-bar input{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-full);color:var(--text);font-size:15px;padding:11px 16px;outline:none;font-family:inherit;min-width:0;transition:border-color .15s}
+.chat-bar input:focus{border-color:var(--accent)}
+.chat-send{width:42px;height:42px;border-radius:var(--r-full);background:var(--accent);border:none;color:#111;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+.chat-send:active{opacity:.7}
+.typing-bubble{display:flex;gap:4px;padding:14px}
+.typing-bubble span{width:6px;height:6px;border-radius:var(--r-full);background:var(--sub);animation:bop .9s infinite}
+.typing-bubble span:nth-child(2){animation-delay:.2s}
+.typing-bubble span:nth-child(3){animation-delay:.4s}
+@keyframes bop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* ââ SHARED COST CARD ââ */
+.sc-card{background:var(--card);border-radius:var(--r16);padding:16px;margin-bottom:10px;cursor:pointer;border:1px solid var(--border);transition:border-color .15s}
+.sc-card:active{border-color:var(--purple)}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.sc-name{font-size:16px;font-weight:700}
+.sc-cat{font-size:12px;color:var(--muted)}
+.sc-amount{text-align:right;flex-shrink:0}
+.sc-total{font-size:18px;font-weight:700;color:var(--purple)}
+.sc-per{font-size:11px;color:var(--muted);margin-top:2px}
+.sc-events{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.sc-tag{background:var(--accent-dim);color:var(--accent);border-radius:var(--r-full);padding:3px 10px;font-size:11px;font-weight:600}
+
+/* ââ SCAN BTN ââ */
+.scan-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:var(--r16);background:var(--accent-dim);border:1.5px dashed var(--accent);color:var(--accent);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:opacity .15s}
+.scan-btn:active{opacity:.7}
+
+/* ââ MISC ââ */
+.divider{height:1px;background:var(--border);margin:14px 0}
+.sec-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:8px;margin:16px 0 10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.txt-muted{color:var(--muted);font-size:13px}
+.txt-sub{color:var(--sub);font-size:13px}
+.txt-green{color:var(--green)}.txt-red{color:var(--red)}.txt-gold{color:var(--accent)}.txt-purple{color:var(--purple)}
+.empty-state{text-align:center;padding:50px 24px;color:var(--muted)}
+.empty-ico{font-size:52px;margin-bottom:12px}
+.empty-state p{font-size:14px;line-height:1.6}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.hidden{display:none!important}
+.mini-form{background:var(--card2);border-radius:var(--r16);padding:14px;margin-bottom:10px;border:1px solid var(--border)}
+.mini-form input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r8);color:var(--text);font-size:14px;padding:9px 12px;margin-bottom:8px;outline:none;font-family:inherit;-webkit-appearance:none}
+.mini-form input:last-of-type{margin-bottom:10px}
+.mini-form input:focus{border-color:var(--accent)}
+.api-err{background:var(--red-dim);border:1px solid rgba(224,92,92,.3);border-radius:var(--r12);padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:12px}
+.api-err a{color:var(--accent);text-decoration:underline}
+
+@media(min-width:640px){body{max-width:480px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border)}.tabbar{max-width:480px;left:50%;transform:translateX(-50%)}}
+@media(min-width:1024px){body{max-width:460px}.tabbar{max-width:460px}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen"><div class="spinner"></div><div style="color:var(--muted);font-size:14px">Caricamento...</div></div>
+
+<!-- AUTH -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-box" id="auth-box"></div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app">
+
+<div id="pg-dashboard" class="page active">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="club-name">SupperApp ð½ï¸</h1>
+      <div class="sub" id="dash-sub">Dubai Â· AED</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="openSettings()">âï¸</button>
+    </div>
+  </div>
+  <div class="page-inner" id="dash-content" style="padding-top:14px"></div>
+</div>
+
+<div id="pg-calendario" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>Calendario</h1></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="prevMonth()">â¹</button>
+      <button class="icon-btn" onclick="nextMonth()">âº</button>
+    </div>
+  </div>
+  <div class="page-inner" style="padding-top:14px">
+    <div class="cal-header"><h2 id="cal-lbl"></h2></div>
+    <div class="cal-legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--accent)"></div>Aperta</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>Sold Out</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Confermata</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div style="margin-top:16px"><button class="btn btn-outline" onclick="openSlotWizard(todayStr())">+ Nuova serata oggi</button></div>
+  </div>
+</div>
+
+<div id="pg-storico" class="page">
+  <div class="topbar"><div class="topbar-left"><h1>Storico</h1></div></div>
+  <div class="page-inner" id="storico-list" style="padding-top:14px"></div>
+</div>
+
+<div id="pg-shared" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>ð§ Bulk</h1><div class="sub">Ingredienti su piÃ¹ serate</div></div>
+    <div class="topbar-actions"><button class="icon-btn" onclick="openSharedForm()">â</button></div>
+  </div>
+  <div class="page-inner" style="padding-top:14px">
+    <div class="card-sm" style="margin-bottom:14px;font-size:13px;color:var(--sub);line-height:1.6">ð§ Ingredienti comprati in bulk? Inserisci il costo e seleziona le serate su cui dividerlo.</div>
+    <div id="shared-list"></div>
+  </div>
+</div>
+
+<div id="pg-ospiti" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>Ospiti</h1></div>
+    <div class="topbar-actions"><button class="icon-btn" onclick="openGuestForm()">â</button></div>
+  </div>
+  <div class="page-inner" style="padding-top:14px">
+    <div class="pick-search" style="margin-bottom:12px"><input type="text" id="guest-search" placeholder="Cerca ospiteâ¦" oninput="renderGuests()"></div>
+    <div id="guest-list"></div>
+  </div>
+</div>
+
+<div id="pg-ai" class="page">
+  <div class="topbar">
+    <div class="topbar-left"><h1>ð¤ Assistente</h1><div class="sub">IT Â· EN</div></div>
+  </div>
+  <div class="page-inner" style="padding-top:10px;display:flex;flex-direction:column;height:calc(100dvh - var(--tab-h) - var(--si-bot) - 60px - var(--si-top))">
+    <div class="chat-messages" id="chat-msgs"></div>
+    <div class="chat-bar">
+      <input type="text" id="chat-in" placeholder="Scrivi un messaggioâ¦" onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">â¶</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabbar" id="main-tabbar">
+  <div class="tab active" onclick="goTo('dashboard')"><div class="ico">ð</div>Home</div>
+  <div class="tab" onclick="goTo('calendario')"><div class="ico">ð</div>Cal</div>
+  <div class="tab" onclick="goTo('storico')"><div class="ico">ð</div>Storia</div>
+  <div class="tab" onclick="goTo('shared')"><div class="ico">ð§</div>Bulk</div>
+  <div class="tab" onclick="goTo('ospiti')"><div class="ico">ð¥</div>Ospiti</div>
+  <div class="tab" onclick="goTo('ai')"><div class="ico">ð¤</div>AI</div>
+</div>
+
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="wiz-ov" onclick="bgClose('wiz-ov')"><div class="sheet"><div class="sheet-handle"></div><div id="wiz-body"></div></div></div>
+<div class="overlay" id="gform-ov" onclick="bgClose('gform-ov')"><div class="sheet"><div class="sheet-handle"></div><div class="sheet-title" id="gform-title">Nuovo Ospite</div><div id="gform-body"></div></div></div>
+<div class="overlay" id="gdet-ov" onclick="bgClose('gdet-ov')"><div class="sheet"><div class="sheet-handle"></div><div id="gdet-body"></div></div></div>
+<div class="overlay" id="evdet-ov" onclick="bgClose('evdet-ov')"><div class="sheet"><div class="sheet-handle"></div><div id="evdet-body"></div></div></div>
+<div class="overlay" id="sc-ov" onclick="bgClose('sc-ov')"><div class="sheet"><div class="sheet-handle"></div><div id="sc-body"></div></div></div>
+
+<!-- SETTINGS -->
+<div class="overlay" id="cfg-ov" onclick="bgClose('cfg-ov')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Impostazioni âï¸</div>
+    <div class="form-group"><label>Nome Supper Club</label><input type="text" id="cfg-name" placeholder="Il tuo supper club"></div>
+    <div class="form-group"><label>OpenAI API Key (per AI)</label><input type="password" id="cfg-key" placeholder="sk-â¦" autocomplete="off"></div>
+    <div class="btn-row"><button class="btn btn-gold" onclick="saveSettings()">Salva</button></div>
+    <div class="divider"></div>
+    <div class="card-sm" style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px">
+      ð¤ Connesso come: <strong id="cfg-email" style="color:var(--text)"></strong><br>
+      I tuoi dati sono sincronizzati nel cloud.
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">ðª Logout</button>
+  </div>
+</div>
+
+<input type="file" id="receipt-inp" accept="image/*" class="hidden">
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+   SUPPERAPP â Multi-user Firebase version
+   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+
+/* âââ FIREBASE CONFIG âââ
+   â ï¸ IMPORTANT: Replace this config with your own Firebase project config!
+   Go to https://console.firebase.google.com â Create project â Web app â Copy config
+*/
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA-ih7KduOlgfJQFey9SinGUWWMyeDvMo8",
+  authDomain: "supperapp-27557.firebaseapp.com",
+  projectId: "supperapp-27557",
+  storageBucket: "supperapp-27557.firebasestorage.app",
+  messagingSenderId: "56685255635",
+  appId: "1:56685255635:web:4b8a3a19fd0358d7e3ad26"
+};
+
+// Check if Firebase is configured
+const isConfigured = FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
+
+let fb, auth, db, currentUser = null;
+let DATA = { events: [], guests: [], slots: [], config: {}, sharedCosts: [] };
+
+if (isConfigured) {
+  fb = firebase.initializeApp(FIREBASE_CONFIG);
+  auth = firebase.auth();
+  db = firebase.firestore();
+  // Enable offline persistence
+  db.enablePersistence({ synchronizeTabs: true }).catch(e => console.log('Persistence:', e.code));
+}
+
+/* âââ AUTH UI âââ */
+function showAuthScreen(mode='login') {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('main-app').classList.remove('active');
+  document.getElementById('main-tabbar').classList.remove('active');
+
+  const box = document.getElementById('auth-box');
+  if (mode === 'login') {
+    box.innerHTML = `
+      <div class="auth-logo">ð½ï¸</div>
+      <div class="auth-title">SupperApp</div>
+      <div class="auth-sub">Accedi al tuo account</div>
+      <input class="auth-inp" id="a-email" type="email" placeholder="Email" autocomplete="email">
+      <input class="auth-inp" id="a-pw" type="password" placeholder="Password" autocomplete="current-password">
+      <button class="auth-btn" onclick="doLogin()">Accedi</button>
+      <div class="auth-err" id="auth-err"></div>
+      <div class="auth-divider"></div>
+      <button class="auth-google" onclick="doGoogle()">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Accedi con Google
+      </button>
+      <div class="auth-link" onclick="showAuthScreen('register')">Non hai un account? Registrati</div>
+    `;
+    document.getElementById('a-pw')?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  } else {
+    box.innerHTML = `
+      <div class="auth-logo">ð½ï¸</div>
+      <div class="auth-title">Crea Account</div>
+      <div class="auth-sub">Registrati per iniziare</div>
+      <input class="auth-inp" id="a-email" type="email" placeholder="Email" autocomplete="email">
+      <input class="auth-inp" id="a-pw" type="password" placeholder="Password (min 6 caratteri)" autocomplete="new-password">
+      <input class="auth-inp" id="a-pw2" type="password" placeholder="Conferma password" autocomplete="new-password">
+      <button class="auth-btn" onclick="doRegister()">Crea Account</button>
+      <div class="auth-err" id="auth-err"></div>
+      <div class="auth-divider"></div>
+      <button class="auth-google" onclick="doGoogle()">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Registrati con Google
+      </button>
+      <div class="auth-link" onclick="showAuthScreen('login')">Hai giÃ  un account? Accedi</div>
+    `;
+    document.getElementById('a-pw2')?.addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+  }
+}
+
+function authErr(msg) {
+  const el = document.getElementById('auth-err');
+  if (el) el.textContent = msg;
+}
+
+const AUTH_ERRORS = {
+  'auth/user-not-found': 'Account non trovato',
+  'auth/wrong-password': 'Password errata',
+  'auth/email-already-in-use': 'Email giÃ  registrata',
+  'auth/weak-password': 'Password troppo debole (min 6 caratteri)',
+  'auth/invalid-email': 'Email non valida',
+  'auth/too-many-requests': 'Troppi tentativi. Riprova tra poco.',
+  'auth/popup-closed-by-user': 'Popup chiuso',
+  'auth/invalid-credential': 'Credenziali non valide',
+};
+
+async function doLogin() {
+  const email = document.getElementById('a-email')?.value?.trim();
+  const pw = document.getElementById('a-pw')?.value;
+  if (!email || !pw) return authErr('Compila tutti i campi');
+  try {
+    await auth.signInWithEmailAndPassword(email, pw);
+  } catch (e) { authErr(AUTH_ERRORS[e.code] || e.message); }
+}
+
+async function doRegister() {
+  const email = document.getElementById('a-email')?.value?.trim();
+  const pw = document.getElementById('a-pw')?.value;
+  const pw2 = document.getElementById('a-pw2')?.value;
+  if (!email || !pw) return authErr('Compila tutti i campi');
+  if (pw !== pw2) return authErr('Le password non coincidono');
+  try {
+    await auth.createUserWithEmailAndPassword(email, pw);
+  } catch (e) { authErr(AUTH_ERRORS[e.code] || e.message); }
+}
+
+async function doGoogle() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+  } catch (e) { authErr(AUTH_ERRORS[e.code] || e.message); }
+}
+
+function doLogout() {
+  if (confirm('Vuoi disconnetterti?')) {
+    auth.signOut();
+  }
+}
+
+/* âââ FIRESTORE HELPERS âââ */
+function userDoc() { return db.collection('users').doc(currentUser.uid); }
+function userCol(name) { return userDoc().collection(name); }
+
+async function loadAllData() {
+  const [evSnap, gsSnap, slSnap, scSnap, cfgSnap] = await Promise.all([
+    userCol('events').get(),
+    userCol('guests').get(),
+    userCol('slots').get(),
+    userCol('sharedCosts').get(),
+    userDoc().get()
+  ]);
+  DATA.events = evSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  DATA.guests = gsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  DATA.slots = slSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  DATA.sharedCosts = scSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  DATA.config = cfgSnap.exists ? cfgSnap.data() : {};
+}
+
+async function saveDoc(col, id, data) {
+  const clean = JSON.parse(JSON.stringify(data));
+  delete clean.id;
+  await userCol(col).doc(id).set(clean, { merge: true });
+}
+async function delDoc(col, id) { await userCol(col).doc(id).delete(); }
+
+// Convenience getters (mirror original API)
+const getEv = () => DATA.events;
+const getGs = () => DATA.guests;
+const getSl = () => DATA.slots;
+const getCfg = () => DATA.config;
+const getSc = () => DATA.sharedCosts;
+
+/* âââ UTILS âââ */
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+const aed = n => 'AED ' + Number(n || 0).toFixed(0);
+const aedF = n => 'AED ' + Number(n || 0).toFixed(2);
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function fmtD(d) { return new Date(d + 'T12:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }); }
+function fmtDFull(d) { return new Date(d + 'T12:00:00').toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+/* âââ REVENUE HELPERS âââ */
+function guestPrice(wg, basePrice) {
+  if (wg.ptype === 'free') return 0;
+  if (wg.ptype === 'disc') return Number(wg.cprice) || 0;
+  return Number(basePrice) || 0;
+}
+function evRevenue(ev) { return (ev.guests || []).reduce((s, wg) => s + guestPrice(wg, ev.pricePerPerson), 0); }
+function sharedForEv(evId) {
+  return getSc().reduce((s, sc) => {
+    if (sc.eids?.includes(evId)) {
+      const pct = (sc.usedPct != null ? sc.usedPct : 100) / 100;
+      s += ((sc.amount || 0) * pct) / (sc.eids.length || 1);
+    }
+    return s;
+  }, 0);
+}
+function evProfit(ev) {
+  const rev = evRevenue(ev), direct = (ev.costs || []).reduce((s, c) => s + (c.amount || 0), 0), shared = sharedForEv(ev.id);
+  return { rev, direct, shared, total: direct + shared, profit: rev - direct - shared };
+}
+
+/* âââ NAVIGATION âââ */
+const PAGES = ['dashboard', 'calendario', 'storico', 'shared', 'ospiti', 'ai'];
+function goTo(name) {
+  PAGES.forEach(p => document.getElementById('pg-' + p)?.classList.toggle('active', p === name));
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', PAGES[i] === name));
+  if (name === 'dashboard') renderDash();
+  if (name === 'calendario') renderCal();
+  if (name === 'storico') renderStorico();
+  if (name === 'shared') renderShared();
+  if (name === 'ospiti') renderGuests();
+  if (name === 'ai' && !chatReady) initChat();
+}
+function bgClose(id) { const ov = document.getElementById(id); if (event.target === ov) ov.classList.remove('show'); }
+function openOv(id) { document.getElementById(id).classList.add('show'); }
+function closeOv(id) { document.getElementById(id).classList.remove('show'); }
+
+/* âââ DASHBOARD âââ */
+function renderDash() {
+  const evs = getEv(), cfg = getCfg();
+  document.getElementById('club-name').textContent = (cfg.name || 'SupperApp') + ' ð½ï¸';
+  document.getElementById('dash-sub').textContent = 'Dubai Â· AED';
+  const mo = todayStr().slice(0, 7);
+  const mEvs = evs.filter(e => e.data?.startsWith(mo));
+  const totRev = mEvs.reduce((s, e) => s + evRevenue(e), 0);
+  const totCost = mEvs.reduce((s, e) => s + evProfit(e).total, 0);
+  const totProfit = totRev - totCost;
+  const upcoming = getSl().filter(s => s.date >= todayStr()).sort((a, b) => a.date.localeCompare(b.date));
+  let html = `<div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val">${aed(totRev)}</div><div class="kpi-lbl">Ricavi mese</div></div>
+    <div class="kpi"><div class="kpi-val ${totProfit >= 0 ? 'txt-green' : 'txt-red'}">${aed(totProfit)}</div><div class="kpi-lbl">Profitto mese</div></div>
+    <div class="kpi"><div class="kpi-val">${mEvs.length}</div><div class="kpi-lbl">Serate</div></div>
+    <div class="kpi"><div class="kpi-val">${totRev > 0 ? Math.round((totProfit / totRev) * 100) : 0}%</div><div class="kpi-lbl">Margine</div></div>
+  </div>`;
+  if (upcoming.length) {
+    html += `<div class="card-title" style="margin:8px 0 8px">Prossime serate</div>`;
+    upcoming.slice(0, 4).forEach(sl => {
+      const ev = evs.find(e => e.id === sl.eventId);
+      const gc = ev?.guests?.length || 0;
+      const slbl = { 'open': 'Aperta', 'soldout': 'Sold Out', 'confirmed': 'Confermata' }[sl.status] || sl.status;
+      const sbg = { 'open': 'bg-gold', 'soldout': 'bg-red', 'confirmed': 'bg-green' }[sl.status] || 'bg-sub';
+      html += `<div class="card-sm row" style="cursor:pointer" onclick="openSlotWizard('${sl.date}')">
+        <div><div style="font-weight:700">${fmtD(sl.date)}</div><div class="txt-sub" style="margin-top:2px">${gc} ospiti Â· ${aed(sl.pricePerPerson || 0)}/p</div></div>
+        <span class="badge ${sbg}">${slbl}</span>
+      </div>`;
+    });
+  } else {
+    html += `<div class="card" style="text-align:center;padding:24px"><div style="font-size:40px;margin-bottom:8px">ð</div><div class="txt-muted">Nessuna serata pianificata</div></div>`;
+  }
+  html += `<div style="margin-top:12px"><button class="btn btn-gold" onclick="goTo('calendario')">+ Nuova Serata</button></div>`;
+  document.getElementById('dash-content').innerHTML = html;
+}
+
+/* âââ CALENDAR âââ */
+let cY = new Date().getFullYear(), cM = new Date().getMonth();
+const MONTHS = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+function prevMonth() { cM--; if (cM < 0) { cM = 11; cY--; } renderCal(); }
+function nextMonth() { cM++; if (cM > 11) { cM = 0; cY++; } renderCal(); }
+function renderCal() {
+  document.getElementById('cal-lbl').textContent = MONTHS[cM] + ' ' + cY;
+  const slMap = {}; getSl().forEach(s => { slMap[s.date] = s; });
+  const fd = new Date(cY, cM, 1).getDay(), dim = new Date(cY, cM + 1, 0).getDate();
+  const off = (fd + 6) % 7, td = todayStr();
+  let h = ['Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa', 'Do'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let i = 0; i < off; i++) h += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= dim; d++) {
+    const ds = `${cY}-${String(cM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const sl = slMap[ds];
+    let cls = 'cal-day' + (sl ? ' ' + sl.status : '') + (ds === td ? ' today' : '');
+    const dot = sl ? `<div class="cal-dot ${sl.status}"></div>` : '';
+    h += `<div class="${cls}" onclick="openSlotWizard('${ds}')">${d}${dot}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = h;
+}
+
+/* âââ WIZARD âââ */
+let W = null, wStep = 1, editEvId = null, gSrch = '', showNGForm = false;
+
+function openSlotWizard(dateStr) {
+  const sl = getSl().find(s => s.date === dateStr);
+  const ev = sl?.eventId ? getEv().find(e => e.id === sl.eventId) : null;
+  if (ev) {
+    W = { date: dateStr, seats: ev.maxGuests || 10, ppp: ev.pricePerPerson || 0, status: sl.status || 'open',
+      guests: JSON.parse(JSON.stringify(ev.guests || [])),
+      costs: JSON.parse(JSON.stringify(ev.costs || [])),
+      note: ev.note || '', nome: ev.nome || '' };
+    editEvId = ev.id;
+  } else {
+    W = { date: dateStr, seats: 10, ppp: 0, status: 'open', guests: [], costs: [], note: '', nome: '' };
+    editEvId = null;
+  }
+  wStep = 1; gSrch = ''; showNGForm = false;
+  openOv('wiz-ov'); renderWiz();
+}
+function renderWiz() { if (wStep === 1) wiz1(); else if (wStep === 2) wiz2(); else wiz3(); }
+
+function wiz1() {
+  document.getElementById('wiz-body').innerHTML = `
+  <div class="wiz-steps"><div class="wiz-dot active"></div><div class="wiz-dot"></div><div class="wiz-dot"></div></div>
+  <div class="wiz-label">Setup Â· ${fmtDFull(W.date)}</div>
+  <div class="form-grid" style="margin-bottom:14px">
+    <div class="form-group" style="margin-bottom:0"><label>Posti</label>
+      <div class="num-row">
+        <button onclick="W.seats=Math.max(1,W.seats-1);document.getElementById('w-seats').value=W.seats">â</button>
+        <input type="number" id="w-seats" value="${W.seats}" min="1" oninput="W.seats=Math.max(1,parseInt(this.value)||1)">
+        <button onclick="W.seats++;document.getElementById('w-seats').value=W.seats">+</button>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0"><label>Prezzo/p (AED)</label>
+      <input type="number" id="w-ppp" value="${W.ppp}" min="0" step="10" inputmode="decimal" style="height:44px">
+    </div>
+  </div>
+  <div class="form-group"><label>Nome serata</label><input type="text" id="w-nome" value="${esc(W.nome)}" placeholder="es. Serata italiana"></div>
+  <div class="form-group"><label>Stato</label>
+    <div class="status-row">
+      <div class="status-pill ${W.status === 'open' ? 'sp-open' : ''}" onclick="W.status='open';wiz1()">ð¡ Aperta</div>
+      <div class="status-pill ${W.status === 'soldout' ? 'sp-soldout' : ''}" onclick="W.status='soldout';wiz1()">ð´ Full</div>
+      <div class="status-pill ${W.status === 'confirmed' ? 'sp-confirmed' : ''}" onclick="W.status='confirmed';wiz1()">ð¢ Conf.</div>
+    </div>
+  </div>
+  <div class="form-group"><label>Note</label><textarea id="w-note" placeholder="Note per la serataâ¦">${esc(W.note)}</textarea></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="closeOv('wiz-ov')">Annulla</button>
+    <button class="btn btn-gold" style="flex:2" onclick="w1next()">Ospiti â</button>
+  </div>
+  ${editEvId ? `<div style="margin-top:10px"><button class="btn btn-danger btn-sm" onclick="delSlot()">ð Elimina serata</button></div>` : ''}`;
+}
+function w1next() {
+  W.seats = parseInt(document.getElementById('w-seats').value) || 10;
+  W.ppp = parseFloat(document.getElementById('w-ppp').value) || 0;
+  W.nome = document.getElementById('w-nome').value.trim();
+  W.note = document.getElementById('w-note').value.trim();
+  wStep = 2; renderWiz();
+}
+
+const PAYS = ['Spliduu', 'Ziina', 'Bank Transfer', 'Breaking Bread', 'Cash'];
+function wiz2() {
+  const gs = getGs();
+  const selIds = W.guests.map(wg => wg.gid);
+  const filt = gs.filter(g => !gSrch || (g.name || '').toLowerCase().includes(gSrch.toLowerCase()));
+  const wizRev = W.guests.reduce((s, wg) => s + guestPrice(wg, W.ppp), 0);
+  let cards = W.guests.map(wg => {
+    const g = gs.find(x => x.id === wg.gid); if (!g) return '';
+    const pt = wg.ptype || 'full';
+    return `<div class="gwiz"><div class="row"><div style="flex:1;min-width:0">
+      <div class="gwiz-name">${esc(g.name)}</div>
+      ${g.phone ? `<div class="gwiz-meta">ð ${esc(g.phone)}</div>` : ''}
+      ${g.instagram ? `<div class="gwiz-meta">ð· ${esc(g.instagram)}</div>` : ''}
+      ${g.restrictions ? `<div class="gwiz-restrict">â ï¸ ${esc(g.restrictions)}</div>` : ''}
+    </div><button style="background:none;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0" onclick="rmWG('${wg.gid}')">Ã</button></div>
+    <div class="gwiz-section">Prezzo</div>
+    <div class="pill-row">
+      <div class="pill ${pt === 'full' ? 'pill-green' : ''}" onclick="setPT('${wg.gid}','full')">â Pieno ${aed(W.ppp)}</div>
+      <div class="pill ${pt === 'disc' ? 'pill-blue' : ''}" onclick="setPT('${wg.gid}','disc')">ð Sconto</div>
+      <div class="pill ${pt === 'free' ? 'pill-purple' : ''}" onclick="setPT('${wg.gid}','free')">ð Gratis</div>
+    </div>
+    ${pt === 'disc' ? `<input class="disc-inp" type="number" placeholder="Importo AED" value="${wg.cprice || ''}" min="0" step="10" inputmode="decimal" onchange="setCPrice('${wg.gid}',this.value)">` : ''}
+    <div class="gwiz-section">Pagamento</div>
+    <div class="pill-row">${PAYS.map(p => `<div class="pill ${wg.pay === p ? 'pill-gold' : ''}" onclick="setPay('${wg.gid}','${p}')">${p}</div>`).join('')}</div>
+    <div class="paid-row" onclick="togglePaid('${wg.gid}')">
+      <input type="checkbox" id="pd-${wg.gid}" ${wg.paid ? 'checked' : ''} onclick="event.stopPropagation();togglePaid('${wg.gid}')">
+      <label for="pd-${wg.gid}" style="cursor:pointer">Pagato â</label>
+    </div></div>`;
+  }).join('');
+  let ngForm = showNGForm ? `<div class="mini-form"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Nuovo ospite</div>
+    <input type="text" id="ng-n" placeholder="Nome *"><input type="tel" id="ng-ph" placeholder="Telefono">
+    <input type="text" id="ng-ig" placeholder="Instagram (@...)"><input type="text" id="ng-r" placeholder="Intolleranze / Restrizioni">
+    <div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="showNGForm=false;wiz2()">Annulla</button>
+    <button class="btn btn-gold btn-sm" style="flex:2" onclick="saveNG()">Aggiungi</button></div></div>` : '';
+  document.getElementById('wiz-body').innerHTML = `
+  <div class="wiz-steps"><div class="wiz-dot done"></div><div class="wiz-dot active"></div><div class="wiz-dot"></div></div>
+  <div class="wiz-label">Ospiti Â· ${W.guests.length} Â· Rev. ${aed(wizRev)}</div>
+  ${cards}
+  <div class="sec-label">Aggiungi ospite</div>
+  <div class="pick-search"><input type="text" placeholder="Cerca dalla rubricaâ¦" value="${esc(gSrch)}" oninput="gSrch=this.value;wiz2()"></div>
+  ${ngForm}
+  <div class="pick-list">
+    ${filt.filter(g => !selIds.includes(g.id)).map(g => `
+    <div class="pick-item" onclick="addWG('${g.id}')"><div style="flex:1;min-width:0">
+      <div class="pick-name">${esc(g.name)}</div>
+      <div class="pick-meta">${[g.phone, g.instagram].filter(Boolean).join(' Â· ') || ''}</div>
+      ${g.restrictions ? `<div style="font-size:11px;color:var(--red)">â ï¸ ${esc(g.restrictions)}</div>` : ''}
+    </div><div class="pick-check"></div></div>`).join('') || `<div style="padding:16px;text-align:center;font-size:13px;color:var(--muted)">Nessun risultato</div>`}
+  </div>
+  ${!showNGForm ? `<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="showNGForm=true;wiz2()">+ Nuovo ospite</button>` : ''}
+  <div class="btn-row"><button class="btn btn-ghost" onclick="wStep=1;renderWiz()">â Indietro</button>
+  <button class="btn btn-gold" style="flex:2" onclick="wStep=3;renderWiz()">Costi â</button></div>`;
+}
+function addWG(gid) { if (W.guests.find(x => x.gid === gid)) return; W.guests.push({ gid, ptype: 'full', cprice: null, pay: null, paid: false }); wiz2(); }
+function rmWG(gid) { W.guests = W.guests.filter(x => x.gid !== gid); wiz2(); }
+function setPT(gid, t) { const wg = W.guests.find(x => x.gid === gid); if (wg) { wg.ptype = t; if (t !== 'disc') wg.cprice = null; wiz2(); } }
+function setCPrice(gid, v) { const wg = W.guests.find(x => x.gid === gid); if (wg) wg.cprice = parseFloat(v) || 0; }
+function setPay(gid, p) { const wg = W.guests.find(x => x.gid === gid); if (wg) { wg.pay = p; wiz2(); } }
+function togglePaid(gid) { const wg = W.guests.find(x => x.gid === gid); if (wg) { wg.paid = !wg.paid; const cb = document.getElementById('pd-' + gid); if (cb) cb.checked = wg.paid; } }
+async function saveNG() {
+  const name = document.getElementById('ng-n')?.value?.trim(); if (!name) return alert('Inserisci il nome');
+  const ng = { id: uid(), name, phone: document.getElementById('ng-ph')?.value?.trim() || '', instagram: document.getElementById('ng-ig')?.value?.trim() || '', restrictions: document.getElementById('ng-r')?.value?.trim() || '', notes: '', addedAt: new Date().toISOString() };
+  DATA.guests.push(ng);
+  await saveDoc('guests', ng.id, ng);
+  W.guests.push({ gid: ng.id, ptype: 'full', cprice: null, pay: null, paid: false });
+  showNGForm = false; wiz2();
+}
+
+/* STEP 3 â COSTS */
+const CATS = ['ð¥© Cibo', 'ð· Vino', 'ð¿ Ingredienti', 'ð¿ Pulizie', 'ð¡ Varie'];
+function wiz3() {
+  const shared = editEvId ? sharedForEv(editEvId) : 0;
+  const rev = W.guests.reduce((s, wg) => s + guestPrice(wg, W.ppp), 0);
+  const direct = W.costs.reduce((s, c) => s + (c.amount || 0), 0);
+  const total = direct + shared;
+  const profit = rev - total;
+  const paying = W.guests.filter(wg => wg.ptype !== 'free').length;
+  const free = W.guests.filter(wg => wg.ptype === 'free').length;
+  const disc = W.guests.filter(wg => wg.ptype === 'disc').length;
+  const costRows = W.costs.length === 0
+    ? `<div class="txt-muted" style="padding:10px 0">Nessun costo aggiunto</div>`
+    : W.costs.map((c, i) => `<div class="cost-item"><div class="cost-info"><div class="cost-cat">${esc(c.cat)}</div><div class="cost-name">${esc(c.name)}</div></div><div class="cost-right"><div class="cost-amt">${aed(c.amount)}</div><div class="cost-del" onclick="delC(${i})">Ã</div></div></div>`).join('');
+  document.getElementById('wiz-body').innerHTML = `
+  <div class="wiz-steps"><div class="wiz-dot done"></div><div class="wiz-dot done"></div><div class="wiz-dot active"></div></div>
+  <div class="wiz-label">Costi & P&L Â· ${fmtD(W.date)}</div>
+  <div class="card-sm" style="margin-bottom:12px">${costRows}</div>
+  <div class="cost-add-row"><select id="nc-cat" style="background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:14px;padding:10px 12px;outline:none;font-family:inherit;-webkit-appearance:none">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
+  <input type="number" id="nc-amt" placeholder="AED" min="0" step="0.5" inputmode="decimal" style="background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:14px;padding:10px 12px;outline:none;font-family:inherit"></div>
+  <div class="cost-add-row2"><input type="text" id="nc-name" placeholder="Descrizione costoâ¦">
+  <button class="btn btn-gold btn-sm" style="flex-shrink:0;width:auto" onclick="addC()">ï¼ Add</button></div>
+  ${shared > 0 ? `<div class="card-sm row" style="margin-bottom:12px"><span style="font-size:13px">ð§ Ingredienti bulk</span><span style="font-weight:700;color:var(--purple)">${aedF(shared)}</span></div>` : ''}
+  <div class="card-sm"><div class="card-title">P&L</div>
+    <div class="pnl-row"><span>Ospiti paganti</span><span>${paying} di ${W.guests.length}${free > 0 ? ' (' + free + ' gratis)' : ''}${disc > 0 ? ' (' + disc + ' scontati)' : ''}</span></div>
+    <div class="pnl-row"><span>Ricavi</span><span class="pnl-pos">${aedF(rev)}</span></div>
+    <div class="pnl-row"><span>Costi diretti</span><span class="pnl-neg">${aedF(direct)}</span></div>
+    ${shared > 0 ? `<div class="pnl-row"><span>Ingredienti bulk</span><span class="pnl-purple">${aedF(shared)}</span></div>` : ''}
+    <div class="pnl-row"><span>Costi totali</span><span class="pnl-neg">${aedF(total)}</span></div>
+    ${W.guests.length > 0 ? `<div class="pnl-row"><span>Costo/persona</span><span>${aedF(total / W.guests.length)}</span></div>` : ''}
+    <div class="pnl-row total"><span>Profitto</span><span class="${profit >= 0 ? 'pnl-pos' : 'pnl-neg'}">${aedF(profit)}</span></div>
+    ${rev > 0 ? `<div class="pnl-row"><span>Margine</span><span class="${profit >= 0 ? 'pnl-pos' : 'pnl-neg'}">${Math.round((profit / rev) * 100)}%</span></div>` : ''}
+  </div>
+  <div class="btn-row"><button class="btn btn-ghost" onclick="wStep=2;renderWiz()">â Ospiti</button>
+  <button class="btn btn-gold" style="flex:2" onclick="saveSlot()">ð¾ Salva</button></div>`;
+}
+function addC() {
+  const cat = document.getElementById('nc-cat')?.value || '';
+  const name = document.getElementById('nc-name')?.value?.trim() || '';
+  const amount = parseFloat(document.getElementById('nc-amt')?.value) || 0;
+  if (!name || !amount) { alert('Inserisci descrizione e importo'); return; }
+  W.costs.push({ cat, name, amount }); wiz3();
+}
+function delC(i) { W.costs.splice(i, 1); wiz3(); }
+
+async function saveSlot() {
+  const evs = DATA.events, sls = DATA.slots;
+  const rev = W.guests.reduce((s, wg) => s + guestPrice(wg, W.ppp), 0);
+  const direct = W.costs.reduce((s, c) => s + (c.amount || 0), 0);
+  const evId = editEvId || uid();
+  const ev = {
+    id: evId, nome: W.nome, data: W.date, status: W.status,
+    maxGuests: W.seats, pricePerPerson: W.ppp,
+    guests: W.guests, costs: W.costs, note: W.note,
+    ricavi: { totale: rev, nOspiti: W.guests.length },
+    costi: { totale: direct }, savedAt: new Date().toISOString()
+  };
+  if (editEvId) { const i = evs.findIndex(e => e.id === editEvId); if (i >= 0) evs[i] = ev; else evs.push(ev); }
+  else evs.push(ev);
+  await saveDoc('events', evId, ev);
+  const slData = { date: W.date, status: W.status, maxGuests: W.seats, pricePerPerson: W.ppp, eventId: evId };
+  const si = sls.findIndex(s => s.date === W.date);
+  if (si >= 0) { slData.id = sls[si].id; sls[si] = slData; }
+  else { slData.id = uid(); sls.push(slData); }
+  await saveDoc('slots', slData.id, slData);
+  closeOv('wiz-ov'); renderCal(); renderDash(); renderStorico();
+}
+async function delSlot() {
+  if (!confirm('Eliminare questa serata?')) return;
+  const ev = DATA.events.find(e => e.id === editEvId);
+  const sl = DATA.slots.find(s => s.date === W.date);
+  DATA.events = DATA.events.filter(e => e.id !== editEvId);
+  DATA.slots = DATA.slots.filter(s => s.date !== W.date);
+  if (editEvId) await delDoc('events', editEvId);
+  if (sl?.id) await delDoc('slots', sl.id);
+  closeOv('wiz-ov'); renderCal(); renderDash(); renderStorico();
+}
+
+/* âââ STORICO âââ */
+function renderStorico() {
+  const evs = getEv().slice().sort((a, b) => b.data.localeCompare(a.data));
+  const el = document.getElementById('storico-list'); if (!el) return;
+  if (!evs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">ð</div><p>Nessuna serata ancora.<br>Creane una dal Calendario.</p></div>`; return; }
+  el.innerHTML = evs.map(ev => {
+    const { rev, profit } = evProfit(ev);
+    const sbg = { 'open': 'bg-gold', 'soldout': 'bg-red', 'confirmed': 'bg-green' }[ev.status] || 'bg-sub';
+    const slbl = { 'open': 'Aperta', 'soldout': 'Sold Out', 'confirmed': 'Confermata' }[ev.status] || ev.status;
+    return `<div class="ev-card" onclick="openEvDet('${ev.id}')">
+      <div class="ev-card-top"><div style="flex:1;min-width:0"><div class="ev-date">${fmtD(ev.data)}</div>${ev.nome ? `<div class="ev-name">${esc(ev.nome)}</div>` : ''}</div><span class="badge ${sbg}">${slbl}</span></div>
+      <div class="ev-stats"><div class="ev-stat"><div class="ev-stat-lbl">Ospiti</div><div class="ev-stat-val">${ev.ricavi?.nOspiti || 0}</div></div>
+      <div class="ev-stat"><div class="ev-stat-lbl">Ricavi</div><div class="ev-stat-val txt-gold">${aed(rev)}</div></div>
+      <div class="ev-stat"><div class="ev-stat-lbl">Profitto</div><div class="ev-stat-val ${profit >= 0 ? 'txt-green' : 'txt-red'}">${aed(profit)}</div></div></div></div>`;
+  }).join('');
+}
+function openEvDet(id) {
+  const ev = getEv().find(e => e.id === id); if (!ev) return;
+  const gs = getGs();
+  const { rev, direct, shared, total, profit } = evProfit(ev);
+  let gRows = (ev.guests || []).map(wg => {
+    const g = gs.find(x => x.id === wg.gid); if (!g) return '';
+    const pBadge = wg.ptype === 'free' ? '<span class="badge bg-purple">Gratis</span>' : wg.ptype === 'disc' ? `<span class="badge bg-blue">AED ${wg.cprice || 0}</span>` : '';
+    return `<div class="row" style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><div style="font-weight:600;display:flex;align-items:center;gap:6px">${esc(g.name)} ${pBadge}</div>${g.phone ? `<div class="txt-muted">ð ${esc(g.phone)}</div>` : ''}${wg.pay ? `<div class="txt-muted">${esc(wg.pay)}</div>` : ''}</div><div style="flex-shrink:0">${wg.paid ? 'â' : 'â³'}</div></div>`;
+  }).join('');
+  let cRows = (ev.costs || []).map(c => `<div class="cost-item"><div class="cost-info"><div class="cost-cat">${esc(c.cat)}</div><div class="cost-name">${esc(c.name)}</div></div><div class="cost-amt">${aed(c.amount)}</div></div>`).join('');
+  document.getElementById('evdet-body').innerHTML = `
+  <div class="sheet-title">${fmtD(ev.data)}${ev.nome ? ' â ' + esc(ev.nome) : ''}</div>
+  <div class="card-sm" style="margin-bottom:12px">
+    <div class="pnl-row"><span>Ricavi</span><span class="pnl-pos">${aedF(rev)}</span></div>
+    <div class="pnl-row"><span>Costi diretti</span><span class="pnl-neg">${aedF(direct)}</span></div>
+    ${shared > 0 ? `<div class="pnl-row"><span>Ingredienti bulk</span><span class="pnl-purple">${aedF(shared)}</span></div>` : ''}
+    <div class="pnl-row total"><span>Profitto</span><span class="${profit >= 0 ? 'pnl-pos' : 'pnl-neg'}">${aedF(profit)}</span></div>
+  </div>
+  ${gRows ? `<div class="sec-label">Ospiti</div><div class="card-sm" style="margin-bottom:12px">${gRows}</div>` : ''}
+  ${cRows ? `<div class="sec-label">Costi</div><div class="card-sm" style="margin-bottom:12px">${cRows}</div>` : ''}
+  <div class="btn-row"><button class="btn btn-ghost" onclick="closeOv('evdet-ov')">Chiudi</button>
+  <button class="btn btn-gold" style="flex:2" onclick="closeOv('evdet-ov');openSlotWizard('${ev.data}')">âï¸ Modifica</button></div>`;
+  openOv('evdet-ov');
+}
+
+/* âââ SHARED COSTS âââ */
+let editScId = null;
+function renderShared() {
+  const scs = getSc(), el = document.getElementById('shared-list'); if (!el) return;
+  if (!scs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">ð§</div><p>Nessun ingrediente bulk.</p></div>`; return; }
+  const evs = getEv();
+  el.innerHTML = scs.map(sc => {
+    const n = sc.eids?.length || 0;
+    const usedPct = sc.usedPct != null ? sc.usedPct : 100;
+    const effAmt = (sc.amount * (usedPct / 100));
+    const effPer = n > 0 ? effAmt / n : effAmt;
+    const tags = (sc.eids || []).map(id => { const e = evs.find(x => x.id === id); return e ? `<span class="sc-tag">${fmtD(e.data)}</span>` : ''; }).join('');
+    return `<div class="sc-card" onclick="openSharedForm('${sc.id}')">
+      <div class="sc-top"><div style="flex:1;min-width:0"><div class="sc-name">${esc(sc.name)}</div><div class="sc-cat">${esc(sc.cat)}${usedPct < 100 ? ` Â· usato ${usedPct}%` : ''}</div></div>
+      <div class="sc-amount" style="flex-shrink:0"><div class="sc-total">${aedF(effAmt)}</div><div class="sc-per">${n} serate Â· ${aedF(effPer)}/serata</div></div></div>
+      ${tags ? `<div class="sc-events">${tags}</div>` : ''}</div>`;
+  }).join('');
+}
+function openSharedForm(id) {
+  editScId = id || null;
+  const sc = id ? getSc().find(x => x.id === id) : null;
+  const evs = getEv().sort((a, b) => b.data.localeCompare(a.data));
+  const SCATS = ['ð¥© Carne/Pesce', 'ð§ Spezie/Condimenti', 'ð« Olio/Aceto', 'ð· Vino/Alcolici', 'ð¥ Latticini', 'ð¾ Cereali/Farine', 'ð« Conserve', 'ð¦ Altro'];
+  const usedPct = sc?.usedPct != null ? sc.usedPct : 100;
+  const evList = evs.slice(0, 30).map(ev => `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+    <input type="checkbox" id="scEv-${ev.id}" ${sc?.eids?.includes(ev.id) ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--purple);flex-shrink:0">
+    <label for="scEv-${ev.id}" style="font-size:14px;cursor:pointer">${fmtD(ev.data)}${ev.nome ? ' Â· ' + esc(ev.nome) : ''}</label></div>`).join('');
+  document.getElementById('sc-body').innerHTML = `
+  <div class="sheet-title">${sc ? 'Modifica' : 'Nuovo'} Ingrediente Bulk</div>
+  <div class="form-group"><label>Nome</label><input type="text" id="scf-n" value="${esc(sc?.name || '')}" placeholder="es. Olio EVO"></div>
+  <div class="form-grid">
+    <div class="form-group" style="margin-bottom:0"><label>Categoria</label><select id="scf-cat">${SCATS.map(c => `<option ${sc?.cat === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+    <div class="form-group" style="margin-bottom:0"><label>Costo totale (AED)</label><input type="number" id="scf-amt" value="${sc?.amount || ''}" min="0" step="1" inputmode="decimal"></div>
+  </div>
+  <div class="form-group" style="margin-top:14px"><label>% usato: <strong id="pctLbl">${usedPct}%</strong></label>
+    <input type="range" id="scf-pct" min="1" max="100" value="${usedPct}" style="width:100%;accent-color:var(--purple)" oninput="document.getElementById('pctLbl').textContent=this.value+'%'">
+  </div>
+  <div class="sec-label">Serate</div>
+  <div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r12);padding:0 12px">${evList || '<div style="padding:16px;text-align:center;color:var(--muted)">Nessuna serata</div>'}</div>
+  <div class="btn-row" style="margin-top:16px">
+    ${sc ? `<button class="btn btn-danger btn-sm" onclick="delSc('${sc.id}')">ð</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeOv('sc-ov')">Annulla</button>
+    <button class="btn btn-purple" style="flex:2" onclick="saveSc()">ð¾ Salva</button>
+  </div>`;
+  openOv('sc-ov');
+}
+async function saveSc() {
+  const name = document.getElementById('scf-n')?.value?.trim();
+  const cat = document.getElementById('scf-cat')?.value || '';
+  const amount = parseFloat(document.getElementById('scf-amt')?.value) || 0;
+  const usedPct = parseInt(document.getElementById('scf-pct')?.value) || 100;
+  if (!name || !amount) { alert('Nome e importo richiesti'); return; }
+  const eids = [];
+  getEv().forEach(ev => { const cb = document.getElementById('scEv-' + ev.id); if (cb?.checked) eids.push(ev.id); });
+  const sc = { id: editScId || uid(), name, cat, amount, usedPct, eids, createdAt: new Date().toISOString() };
+  if (editScId) { const i = DATA.sharedCosts.findIndex(x => x.id === editScId); if (i >= 0) DATA.sharedCosts[i] = sc; else DATA.sharedCosts.push(sc); }
+  else DATA.sharedCosts.push(sc);
+  await saveDoc('sharedCosts', sc.id, sc);
+  closeOv('sc-ov'); renderShared(); renderDash();
+}
+async function delSc(id) {
+  if (!confirm('Eliminare?')) return;
+  DATA.sharedCosts = DATA.sharedCosts.filter(x => x.id !== id);
+  await delDoc('sharedCosts', id);
+  closeOv('sc-ov'); renderShared(); renderDash();
+}
+
+/* âââ GUESTS âââ */
+function renderGuests() {
+  const gs = getGs(), q = (document.getElementById('guest-search')?.value || '').toLowerCase();
+  const filt = gs.filter(g => !q || (g.name || '').toLowerCase().includes(q));
+  const el = document.getElementById('guest-list'); if (!el) return;
+  if (!filt.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">ð¥</div><p>${q ? 'Nessun risultato' : 'Nessun ospite ancora'}</p></div>`; return; }
+  const evs = getEv();
+  el.innerHTML = filt.sort((a, b) => (a.name || '').localeCompare(b.name)).map(g => {
+    const visits = evs.filter(e => (e.guests || []).some(wg => wg.gid === g.id)).length;
+    return `<div class="guest-card" onclick="openGuestDet('${g.id}')">
+      <div class="g-av">${(g.name || '?')[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0"><div class="g-name">${esc(g.name)}</div>
+      <div class="g-meta">${[g.phone, g.instagram].filter(Boolean).join(' Â· ')}${visits ? ` Â· ${visits} serate` : ''}</div>
+      ${g.restrictions ? `<div class="g-restrict">â ï¸ ${esc(g.restrictions)}</div>` : ''}</div></div>`;
+  }).join('');
+}
+function openGuestForm(id) {
+  const g = id ? getGs().find(x => x.id === id) : null;
+  editGuestId = id || null;
+  document.getElementById('gform-title').textContent = g ? 'Modifica Ospite' : 'Nuovo Ospite';
+  document.getElementById('gform-body').innerHTML = `
+  <div class="form-group"><label>Nome *</label><input type="text" id="gf-n" value="${esc(g?.name || '')}"></div>
+  <div class="form-group"><label>Telefono</label><input type="tel" id="gf-ph" value="${esc(g?.phone || '')}"></div>
+  <div class="form-group"><label>Instagram</label><input type="text" id="gf-ig" value="${esc(g?.instagram || '')}"></div>
+  <div class="form-group"><label>Intolleranze / Restrizioni</label><input type="text" id="gf-r" value="${esc(g?.restrictions || '')}"></div>
+  <div class="btn-row">
+    ${g ? `<button class="btn btn-danger btn-sm" onclick="delGuest('${g.id}')">ð</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeOv('gform-ov')">Annulla</button>
+    <button class="btn btn-gold" style="flex:2" onclick="saveGuest()">ð¾ Salva</button>
+  </div>`;
+  openOv('gform-ov');
+}
+let editGuestId = null;
+async function saveGuest() {
+  const name = document.getElementById('gf-n')?.value?.trim(); if (!name) return alert('Nome richiesto');
+  const gData = { id: editGuestId || uid(), name, phone: document.getElementById('gf-ph')?.value?.trim() || '', instagram: document.getElementById('gf-ig')?.value?.trim() || '', restrictions: document.getElementById('gf-r')?.value?.trim() || '', notes: '', addedAt: new Date().toISOString() };
+  if (editGuestId) { const i = DATA.guests.findIndex(x => x.id === editGuestId); if (i >= 0) DATA.guests[i] = gData; else DATA.guests.push(gData); }
+  else DATA.guests.push(gData);
+  await saveDoc('guests', gData.id, gData);
+  closeOv('gform-ov'); renderGuests();
+}
+async function delGuest(id) {
+  if (!confirm('Eliminare ospite?')) return;
+  DATA.guests = DATA.guests.filter(x => x.id !== id);
+  await delDoc('guests', id);
+  closeOv('gform-ov'); renderGuests();
+}
+function openGuestDet(id) {
+  const g = getGs().find(x => x.id === id); if (!g) return;
+  const evs = getEv().filter(e => (e.guests || []).some(wg => wg.gid === id));
+  document.getElementById('gdet-body').innerHTML = `
+  <div class="sheet-title">${esc(g.name)}</div>
+  <div class="card-sm" style="margin-bottom:12px">
+    ${g.phone ? `<div style="padding:4px 0;font-size:14px">ð ${esc(g.phone)}</div>` : ''}
+    ${g.instagram ? `<div style="padding:4px 0;font-size:14px">ð· ${esc(g.instagram)}</div>` : ''}
+    ${g.restrictions ? `<div style="padding:4px 0;font-size:14px;color:var(--red)">â ï¸ ${esc(g.restrictions)}</div>` : ''}
+    <div style="padding:4px 0;font-size:14px">${evs.length} serate</div>
+  </div>
+  ${evs.length ? `<div class="sec-label">Serate</div>${evs.map(ev => `<div class="card-sm" style="margin-bottom:6px"><strong>${fmtD(ev.data)}</strong> ${ev.nome ? 'Â· ' + esc(ev.nome) : ''}</div>`).join('')}` : ''}
+  <div class="btn-row"><button class="btn btn-ghost" onclick="closeOv('gdet-ov')">Chiudi</button>
+  <button class="btn btn-gold" style="flex:2" onclick="closeOv('gdet-ov');openGuestForm('${g.id}')">âï¸ Modifica</button></div>`;
+  openOv('gdet-ov');
+}
+
+/* âââ AI CHAT âââ */
+let chatReady = false, chatHistory = [];
+function initChat() {
+  chatReady = true;
+  document.getElementById('chat-msgs').innerHTML = `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble">Ciao! Sono l'assistente di SupperApp. Come posso aiutarti?</div></div>`;
+}
+async function sendChat() {
+  const inp = document.getElementById('chat-in');
+  const msg = inp?.value?.trim(); if (!msg) return;
+  inp.value = '';
+  const cfg = getCfg();
+  if (!cfg.key) { alert('Inserisci la tua API key OpenAI nelle Impostazioni âï¸'); return; }
+  const el = document.getElementById('chat-msgs');
+  el.innerHTML += `<div class="chat-msg user"><div class="bubble">${esc(msg)}</div></div>`;
+  el.innerHTML += `<div class="chat-msg ai" id="typing"><div class="chat-av">ð¤</div><div class="bubble"><div class="typing-bubble"><span></span><span></span><span></span></div></div></div>`;
+  el.scrollTop = el.scrollHeight;
+  chatHistory.push({ role: 'user', content: msg });
+  try {
+    const sysMsg = `Sei l'assistente AI di SupperApp, un'app per gestire supper club privati a Dubai. Rispondi in italiano o inglese. Valuta AED. Sii conciso e utile.`;
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${cfg.key}` },
+      body: JSON.stringify({ model: 'gpt-4o', messages: [{ role: 'system', content: sysMsg }, ...chatHistory.slice(-10)], max_tokens: 1000 })
+    });
+    const data = await r.json();
+    document.getElementById('typing')?.remove();
+    if (data.error) {
+      el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble" style="color:var(--red)">â ${esc(data.error.message)}</div></div>`;
+    } else {
+      const reply = data.choices?.[0]?.message?.content || 'Nessuna risposta';
+      chatHistory.push({ role: 'assistant', content: reply });
+      el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble">${esc(reply)}</div></div>`;
+    }
+  } catch (e) {
+    document.getElementById('typing')?.remove();
+    el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble" style="color:var(--red)">â ${esc(e.message)}</div></div>`;
+  }
+  el.scrollTop = el.scrollHeight;
+}
+
+/* âââ SETTINGS âââ */
+function openSettings() {
+  const cfg = getCfg();
+  document.getElementById('cfg-name').value = cfg.name || '';
+  document.getElementById('cfg-key').value = cfg.key || '';
+  document.getElementById('cfg-email').textContent = currentUser?.email || '';
+  openOv('cfg-ov');
+}
+async function saveSettings() {
+  DATA.config.name = document.getElementById('cfg-name')?.value?.trim() || '';
+  DATA.config.key = document.getElementById('cfg-key')?.value?.trim() || '';
+  await userDoc().set(DATA.config, { merge: true });
+  closeOv('cfg-ov'); renderDash();
+}
+
+/* âââ INIT âââ */
+function showApp() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('main-app').classList.add('active');
+  document.getElementById('main-tabbar').classList.add('active');
+  renderDash(); renderCal();
+}
+
+// Not-configured mode: show setup instructions
+if (!isConfigured) {
+  document.getElementById('loading-screen').innerHTML = `
+    <div style="max-width:400px;text-align:center;padding:24px">
+      <div style="font-size:52px;margin-bottom:16px">ð§</div>
+      <h2 style="color:var(--accent);margin-bottom:12px">Setup Firebase</h2>
+      <div style="color:var(--sub);font-size:14px;line-height:1.8;text-align:left">
+        <p style="margin-bottom:16px">Per usare SupperApp, devi configurare un progetto Firebase:</p>
+        <ol style="padding-left:20px">
+          <li>Vai su <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent)">console.firebase.google.com</a></li>
+          <li>Crea un nuovo progetto</li>
+          <li>Attiva <strong style="color:var(--text)">Authentication</strong> (Email/Password + Google)</li>
+          <li>Attiva <strong style="color:var(--text)">Cloud Firestore</strong></li>
+          <li>Crea una <strong style="color:var(--text)">Web App</strong> e copia la config</li>
+          <li>Incolla la config in <code style="color:var(--accent)">FIREBASE_CONFIG</code> in questo file</li>
+        </ol>
+        <p style="margin-top:16px;color:var(--muted);font-size:13px">Il piano gratuito di Firebase (Spark) supporta fino a ~50K utenti e 1GB di storage.</p>
+      </div>
+    </div>`;
+} else {
+  // Listen for auth state
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadAllData();
+      showApp();
+    } else {
+      currentUser = null;
+      showAuthScreen('login');
+    }
+  });
+}
+</script>
+</body>
+</html>
