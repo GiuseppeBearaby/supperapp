@@ -27,7 +27,7 @@
 html{height:100%;-webkit-overflow-scrolling:touch}
 body{
   background:var(--bg);color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji';
   font-size:15px;line-height:1.4;
   min-height:100dvh;overflow-x:hidden;
   padding-left:var(--si-l);padding-right:var(--si-r);
@@ -257,7 +257,7 @@ body{
 .pick-search{position:relative;margin-bottom:10px}
 .pick-search input{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:15px;padding:10px 14px 10px 38px;outline:none;font-family:inherit;transition:border-color .15s}
 .pick-search input:focus{border-color:var(--accent)}
-.pick-search::before{content:'ð';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px}
+.pick-search::before{content:'&#128269;';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px}
 .pick-list{max-height:180px;overflow-y:auto;border-radius:var(--r12);background:var(--card2);border:1px solid var(--border)}
 .pick-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
 .pick-item:last-child{border-bottom:none}
@@ -393,11 +393,11 @@ body{
 <div id="pg-dashboard" class="page active">
   <div class="topbar">
     <div class="topbar-left">
-      <h1 id="club-name">SupperApp ð½ï¸</h1>
+      <h1 id="club-name">SupperApp &#127869;&#65039;</h1>
       <div class="sub" id="dash-sub">Dubai Â· AED</div>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn" onclick="openSettings()">âï¸</button>
+      <button class="icon-btn" onclick="openSettings()">&#9881;&#65039;</button>
     </div>
   </div>
   <div class="page-inner" id="dash-content" style="padding-top:14px"></div>
@@ -430,11 +430,11 @@ body{
 
 <div id="pg-shared" class="page">
   <div class="topbar">
-    <div class="topbar-left"><h1>ð§ Bulk</h1><div class="sub">Ingredienti su piÃ¹ serate</div></div>
-    <div class="topbar-actions"><button class="icon-btn" onclick="openSharedForm()">â</button></div>
+    <div class="topbar-left"><h1>&#129476; Bulk</h1><div class="sub">Ingredienti su piÃ¹ serate</div></div>
+    <div class="topbar-actions"><button class="icon-btn" onclick="openSharedForm()">&#10133;</button></div>
   </div>
   <div class="page-inner" style="padding-top:14px">
-    <div class="card-sm" style="margin-bottom:14px;font-size:13px;color:var(--sub);line-height:1.6">ð§ Ingredienti comprati in bulk? Inserisci il costo e seleziona le serate su cui dividerlo.</div>
+    <div class="card-sm" style="margin-bottom:14px;font-size:13px;color:var(--sub);line-height:1.6">&#129476; Ingredienti comprati in bulk? Inserisci il costo e seleziona le serate su cui dividerlo.</div>
     <div id="shared-list"></div>
   </div>
 </div>
@@ -442,7 +442,7 @@ body{
 <div id="pg-ospiti" class="page">
   <div class="topbar">
     <div class="topbar-left"><h1>Ospiti</h1></div>
-    <div class="topbar-actions"><button class="icon-btn" onclick="openGuestForm()">â</button></div>
+    <div class="topbar-actions"><button class="icon-btn" onclick="openGuestForm()">&#10133;</button></div>
   </div>
   <div class="page-inner" style="padding-top:14px">
     <div class="pick-search" style="margin-bottom:12px"><input type="text" id="guest-search" placeholder="Cerca ospiteâ¦" oninput="renderGuests()"></div>
@@ -452,24 +452,24 @@ body{
 
 <div id="pg-ai" class="page">
   <div class="topbar">
-    <div class="topbar-left"><h1>ð¤ Assistente</h1><div class="sub">IT Â· EN</div></div>
+    <div class="topbar-left"><h1>&#129302; Assistente</h1><div class="sub">IT Â· EN</div></div>
   </div>
   <div class="page-inner" style="padding-top:10px;display:flex;flex-direction:column;height:calc(100dvh - var(--tab-h) - var(--si-bot) - 60px - var(--si-top))">
     <div class="chat-messages" id="chat-msgs"></div>
     <div class="chat-bar">
       <input type="text" id="chat-in" placeholder="Scrivi un messaggioâ¦" onkeydown="if(event.key==='Enter')sendChat()">
-      <button class="chat-send" onclick="sendChat()">â¶</button>
+      <button class="chat-send" onclick="sendChat()">&#9654;</button>
     </div>
   </div>
 </div>
 
 <div class="tabbar" id="main-tabbar">
-  <div class="tab active" onclick="goTo('dashboard')"><div class="ico">ð</div>Home</div>
-  <div class="tab" onclick="goTo('calendario')"><div class="ico">ð</div>Cal</div>
-  <div class="tab" onclick="goTo('storico')"><div class="ico">ð</div>Storia</div>
-  <div class="tab" onclick="goTo('shared')"><div class="ico">ð§</div>Bulk</div>
-  <div class="tab" onclick="goTo('ospiti')"><div class="ico">ð¥</div>Ospiti</div>
-  <div class="tab" onclick="goTo('ai')"><div class="ico">ð¤</div>AI</div>
+  <div class="tab active" onclick="goTo('dashboard')"><div class="ico">&#128202;</div>Home</div>
+  <div class="tab" onclick="goTo('calendario')"><div class="ico">&#128197;</div>Cal</div>
+  <div class="tab" onclick="goTo('storico')"><div class="ico">&#128203;</div>Storia</div>
+  <div class="tab" onclick="goTo('shared')"><div class="ico">&#129476;</div>Bulk</div>
+  <div class="tab" onclick="goTo('ospiti')"><div class="ico">&#128101;</div>Ospiti</div>
+  <div class="tab" onclick="goTo('ai')"><div class="ico">&#129302;</div>AI</div>
 </div>
 
 </div>
@@ -485,16 +485,16 @@ body{
 <div class="overlay" id="cfg-ov" onclick="bgClose('cfg-ov')">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Impostazioni âï¸</div>
+    <div class="sheet-title">Impostazioni &#9881;&#65039;</div>
     <div class="form-group"><label>Nome Supper Club</label><input type="text" id="cfg-name" placeholder="Il tuo supper club"></div>
     <div class="form-group"><label>OpenAI API Key (per AI)</label><input type="password" id="cfg-key" placeholder="sk-â¦" autocomplete="off"></div>
     <div class="btn-row"><button class="btn btn-gold" onclick="saveSettings()">Salva</button></div>
     <div class="divider"></div>
     <div class="card-sm" style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px">
-      ð¤ Connesso come: <strong id="cfg-email" style="color:var(--text)"></strong><br>
+      &#128100; Connesso come: <strong id="cfg-email" style="color:var(--text)"></strong><br>
       I tuoi dati sono sincronizzati nel cloud.
     </div>
-    <button class="btn btn-ghost btn-sm" onclick="doLogout()">ðª Logout</button>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">&#128682; Logout</button>
   </div>
 </div>
 
@@ -511,7 +511,7 @@ body{
    âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 
 /* âââ FIREBASE CONFIG âââ
-   â ï¸ IMPORTANT: Replace this config with your own Firebase project config!
+   &#9888;&#65039; IMPORTANT: Replace this config with your own Firebase project config!
    Go to https://console.firebase.google.com â Create project â Web app â Copy config
 */
 const FIREBASE_CONFIG = {
@@ -547,7 +547,7 @@ function showAuthScreen(mode='login') {
   const box = document.getElementById('auth-box');
   if (mode === 'login') {
     box.innerHTML = `
-      <div class="auth-logo">ð½ï¸</div>
+      <div class="auth-logo">&#127869;&#65039;</div>
       <div class="auth-title">SupperApp</div>
       <div class="auth-sub">Accedi al tuo account</div>
       <input class="auth-inp" id="a-email" type="email" placeholder="Email" autocomplete="email">
@@ -564,7 +564,7 @@ function showAuthScreen(mode='login') {
     document.getElementById('a-pw')?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   } else {
     box.innerHTML = `
-      <div class="auth-logo">ð½ï¸</div>
+      <div class="auth-logo">&#127869;&#65039;</div>
       <div class="auth-title">Crea Account</div>
       <div class="auth-sub">Registrati per iniziare</div>
       <input class="auth-inp" id="a-email" type="email" placeholder="Email" autocomplete="email">
@@ -714,7 +714,7 @@ function closeOv(id) { document.getElementById(id).classList.remove('show'); }
 /* âââ DASHBOARD âââ */
 function renderDash() {
   const evs = getEv(), cfg = getCfg();
-  document.getElementById('club-name').textContent = (cfg.name || 'SupperApp') + ' ð½ï¸';
+  document.getElementById('club-name').textContent = (cfg.name || 'SupperApp') + ' &#127869;&#65039;';
   document.getElementById('dash-sub').textContent = 'Dubai Â· AED';
   const mo = todayStr().slice(0, 7);
   const mEvs = evs.filter(e => e.data?.startsWith(mo));
@@ -741,7 +741,7 @@ function renderDash() {
       </div>`;
     });
   } else {
-    html += `<div class="card" style="text-align:center;padding:24px"><div style="font-size:40px;margin-bottom:8px">ð</div><div class="txt-muted">Nessuna serata pianificata</div></div>`;
+    html += `<div class="card" style="text-align:center;padding:24px"><div style="font-size:40px;margin-bottom:8px">&#128197;</div><div class="txt-muted">Nessuna serata pianificata</div></div>`;
   }
   html += `<div style="margin-top:12px"><button class="btn btn-gold" onclick="goTo('calendario')">+ Nuova Serata</button></div>`;
   document.getElementById('dash-content').innerHTML = html;
@@ -809,9 +809,9 @@ function wiz1() {
   <div class="form-group"><label>Nome serata</label><input type="text" id="w-nome" value="${esc(W.nome)}" placeholder="es. Serata italiana"></div>
   <div class="form-group"><label>Stato</label>
     <div class="status-row">
-      <div class="status-pill ${W.status === 'open' ? 'sp-open' : ''}" onclick="W.status='open';wiz1()">ð¡ Aperta</div>
-      <div class="status-pill ${W.status === 'soldout' ? 'sp-soldout' : ''}" onclick="W.status='soldout';wiz1()">ð´ Full</div>
-      <div class="status-pill ${W.status === 'confirmed' ? 'sp-confirmed' : ''}" onclick="W.status='confirmed';wiz1()">ð¢ Conf.</div>
+      <div class="status-pill ${W.status === 'open' ? 'sp-open' : ''}" onclick="W.status='open';wiz1()">&#128993; Aperta</div>
+      <div class="status-pill ${W.status === 'soldout' ? 'sp-soldout' : ''}" onclick="W.status='soldout';wiz1()">&#128308; Full</div>
+      <div class="status-pill ${W.status === 'confirmed' ? 'sp-confirmed' : ''}" onclick="W.status='confirmed';wiz1()">&#128994; Conf.</div>
     </div>
   </div>
   <div class="form-group"><label>Note</label><textarea id="w-note" placeholder="Note per la serataâ¦">${esc(W.note)}</textarea></div>
@@ -819,7 +819,7 @@ function wiz1() {
     <button class="btn btn-ghost" onclick="closeOv('wiz-ov')">Annulla</button>
     <button class="btn btn-gold" style="flex:2" onclick="w1next()">Ospiti â</button>
   </div>
-  ${editEvId ? `<div style="margin-top:10px"><button class="btn btn-danger btn-sm" onclick="delSlot()">ð Elimina serata</button></div>` : ''}`;
+  ${editEvId ? `<div style="margin-top:10px"><button class="btn btn-danger btn-sm" onclick="delSlot()">&#128465; Elimina serata</button></div>` : ''}`;
 }
 function w1next() {
   W.seats = parseInt(document.getElementById('w-seats').value) || 10;
@@ -840,22 +840,22 @@ function wiz2() {
     const pt = wg.ptype || 'full';
     return `<div class="gwiz"><div class="row"><div style="flex:1;min-width:0">
       <div class="gwiz-name">${esc(g.name)}</div>
-      ${g.phone ? `<div class="gwiz-meta">ð ${esc(g.phone)}</div>` : ''}
-      ${g.instagram ? `<div class="gwiz-meta">ð· ${esc(g.instagram)}</div>` : ''}
-      ${g.restrictions ? `<div class="gwiz-restrict">â ï¸ ${esc(g.restrictions)}</div>` : ''}
+      ${g.phone ? `<div class="gwiz-meta">&#128222; ${esc(g.phone)}</div>` : ''}
+      ${g.instagram ? `<div class="gwiz-meta">&#128247; ${esc(g.instagram)}</div>` : ''}
+      ${g.restrictions ? `<div class="gwiz-restrict">&#9888;&#65039; ${esc(g.restrictions)}</div>` : ''}
     </div><button style="background:none;border:none;color:var(--red);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0" onclick="rmWG('${wg.gid}')">Ã</button></div>
     <div class="gwiz-section">Prezzo</div>
     <div class="pill-row">
-      <div class="pill ${pt === 'full' ? 'pill-green' : ''}" onclick="setPT('${wg.gid}','full')">â Pieno ${aed(W.ppp)}</div>
-      <div class="pill ${pt === 'disc' ? 'pill-blue' : ''}" onclick="setPT('${wg.gid}','disc')">ð Sconto</div>
-      <div class="pill ${pt === 'free' ? 'pill-purple' : ''}" onclick="setPT('${wg.gid}','free')">ð Gratis</div>
+      <div class="pill ${pt === 'full' ? 'pill-green' : ''}" onclick="setPT('${wg.gid}','full')">&#9989; Pieno ${aed(W.ppp)}</div>
+      <div class="pill ${pt === 'disc' ? 'pill-blue' : ''}" onclick="setPT('${wg.gid}','disc')">&#128153; Sconto</div>
+      <div class="pill ${pt === 'free' ? 'pill-purple' : ''}" onclick="setPT('${wg.gid}','free')">&#128156; Gratis</div>
     </div>
     ${pt === 'disc' ? `<input class="disc-inp" type="number" placeholder="Importo AED" value="${wg.cprice || ''}" min="0" step="10" inputmode="decimal" onchange="setCPrice('${wg.gid}',this.value)">` : ''}
     <div class="gwiz-section">Pagamento</div>
     <div class="pill-row">${PAYS.map(p => `<div class="pill ${wg.pay === p ? 'pill-gold' : ''}" onclick="setPay('${wg.gid}','${p}')">${p}</div>`).join('')}</div>
     <div class="paid-row" onclick="togglePaid('${wg.gid}')">
       <input type="checkbox" id="pd-${wg.gid}" ${wg.paid ? 'checked' : ''} onclick="event.stopPropagation();togglePaid('${wg.gid}')">
-      <label for="pd-${wg.gid}" style="cursor:pointer">Pagato â</label>
+      <label for="pd-${wg.gid}" style="cursor:pointer">Pagato &#10003;</label>
     </div></div>`;
   }).join('');
   let ngForm = showNGForm ? `<div class="mini-form"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Nuovo ospite</div>
@@ -875,7 +875,7 @@ function wiz2() {
     <div class="pick-item" onclick="addWG('${g.id}')"><div style="flex:1;min-width:0">
       <div class="pick-name">${esc(g.name)}</div>
       <div class="pick-meta">${[g.phone, g.instagram].filter(Boolean).join(' Â· ') || ''}</div>
-      ${g.restrictions ? `<div style="font-size:11px;color:var(--red)">â ï¸ ${esc(g.restrictions)}</div>` : ''}
+      ${g.restrictions ? `<div style="font-size:11px;color:var(--red)">&#9888;&#65039; ${esc(g.restrictions)}</div>` : ''}
     </div><div class="pick-check"></div></div>`).join('') || `<div style="padding:16px;text-align:center;font-size:13px;color:var(--muted)">Nessun risultato</div>`}
   </div>
   ${!showNGForm ? `<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="showNGForm=true;wiz2()">+ Nuovo ospite</button>` : ''}
@@ -898,7 +898,7 @@ async function saveNG() {
 }
 
 /* STEP 3 â COSTS */
-const CATS = ['ð¥© Cibo', 'ð· Vino', 'ð¿ Ingredienti', 'ð¿ Pulizie', 'ð¡ Varie'];
+const CATS = ['ð¥© Cibo', '&#127863; Vino', '&#127807; Ingredienti', 'ð¿ Pulizie', '&#128161; Varie'];
 function wiz3() {
   const shared = editEvId ? sharedForEv(editEvId) : 0;
   const rev = W.guests.reduce((s, wg) => s + guestPrice(wg, W.ppp), 0);
@@ -919,7 +919,7 @@ function wiz3() {
   <input type="number" id="nc-amt" placeholder="AED" min="0" step="0.5" inputmode="decimal" style="background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r12);color:var(--text);font-size:14px;padding:10px 12px;outline:none;font-family:inherit"></div>
   <div class="cost-add-row2"><input type="text" id="nc-name" placeholder="Descrizione costoâ¦">
   <button class="btn btn-gold btn-sm" style="flex-shrink:0;width:auto" onclick="addC()">ï¼ Add</button></div>
-  ${shared > 0 ? `<div class="card-sm row" style="margin-bottom:12px"><span style="font-size:13px">ð§ Ingredienti bulk</span><span style="font-weight:700;color:var(--purple)">${aedF(shared)}</span></div>` : ''}
+  ${shared > 0 ? `<div class="card-sm row" style="margin-bottom:12px"><span style="font-size:13px">&#129476; Ingredienti bulk</span><span style="font-weight:700;color:var(--purple)">${aedF(shared)}</span></div>` : ''}
   <div class="card-sm"><div class="card-title">P&L</div>
     <div class="pnl-row"><span>Ospiti paganti</span><span>${paying} di ${W.guests.length}${free > 0 ? ' (' + free + ' gratis)' : ''}${disc > 0 ? ' (' + disc + ' scontati)' : ''}</span></div>
     <div class="pnl-row"><span>Ricavi</span><span class="pnl-pos">${aedF(rev)}</span></div>
@@ -931,7 +931,7 @@ function wiz3() {
     ${rev > 0 ? `<div class="pnl-row"><span>Margine</span><span class="${profit >= 0 ? 'pnl-pos' : 'pnl-neg'}">${Math.round((profit / rev) * 100)}%</span></div>` : ''}
   </div>
   <div class="btn-row"><button class="btn btn-ghost" onclick="wStep=2;renderWiz()">â Ospiti</button>
-  <button class="btn btn-gold" style="flex:2" onclick="saveSlot()">ð¾ Salva</button></div>`;
+  <button class="btn btn-gold" style="flex:2" onclick="saveSlot()">&#128190; Salva</button></div>`;
 }
 function addC() {
   const cat = document.getElementById('nc-cat')?.value || '';
@@ -979,7 +979,7 @@ async function delSlot() {
 function renderStorico() {
   const evs = getEv().slice().sort((a, b) => b.data.localeCompare(a.data));
   const el = document.getElementById('storico-list'); if (!el) return;
-  if (!evs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">ð</div><p>Nessuna serata ancora.<br>Creane una dal Calendario.</p></div>`; return; }
+  if (!evs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">&#128203;</div><p>Nessuna serata ancora.<br>Creane una dal Calendario.</p></div>`; return; }
   el.innerHTML = evs.map(ev => {
     const { rev, profit } = evProfit(ev);
     const sbg = { 'open': 'bg-gold', 'soldout': 'bg-red', 'confirmed': 'bg-green' }[ev.status] || 'bg-sub';
@@ -998,7 +998,7 @@ function openEvDet(id) {
   let gRows = (ev.guests || []).map(wg => {
     const g = gs.find(x => x.id === wg.gid); if (!g) return '';
     const pBadge = wg.ptype === 'free' ? '<span class="badge bg-purple">Gratis</span>' : wg.ptype === 'disc' ? `<span class="badge bg-blue">AED ${wg.cprice || 0}</span>` : '';
-    return `<div class="row" style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><div style="font-weight:600;display:flex;align-items:center;gap:6px">${esc(g.name)} ${pBadge}</div>${g.phone ? `<div class="txt-muted">ð ${esc(g.phone)}</div>` : ''}${wg.pay ? `<div class="txt-muted">${esc(wg.pay)}</div>` : ''}</div><div style="flex-shrink:0">${wg.paid ? 'â' : 'â³'}</div></div>`;
+    return `<div class="row" style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><div style="font-weight:600;display:flex;align-items:center;gap:6px">${esc(g.name)} ${pBadge}</div>${g.phone ? `<div class="txt-muted">&#128222; ${esc(g.phone)}</div>` : ''}${wg.pay ? `<div class="txt-muted">${esc(wg.pay)}</div>` : ''}</div><div style="flex-shrink:0">${wg.paid ? '&#9989;' : '&#9203;'}</div></div>`;
   }).join('');
   let cRows = (ev.costs || []).map(c => `<div class="cost-item"><div class="cost-info"><div class="cost-cat">${esc(c.cat)}</div><div class="cost-name">${esc(c.name)}</div></div><div class="cost-amt">${aed(c.amount)}</div></div>`).join('');
   document.getElementById('evdet-body').innerHTML = `
@@ -1012,7 +1012,7 @@ function openEvDet(id) {
   ${gRows ? `<div class="sec-label">Ospiti</div><div class="card-sm" style="margin-bottom:12px">${gRows}</div>` : ''}
   ${cRows ? `<div class="sec-label">Costi</div><div class="card-sm" style="margin-bottom:12px">${cRows}</div>` : ''}
   <div class="btn-row"><button class="btn btn-ghost" onclick="closeOv('evdet-ov')">Chiudi</button>
-  <button class="btn btn-gold" style="flex:2" onclick="closeOv('evdet-ov');openSlotWizard('${ev.data}')">âï¸ Modifica</button></div>`;
+  <button class="btn btn-gold" style="flex:2" onclick="closeOv('evdet-ov');openSlotWizard('${ev.data}')">&#9999;&#65039; Modifica</button></div>`;
   openOv('evdet-ov');
 }
 
@@ -1020,7 +1020,7 @@ function openEvDet(id) {
 let editScId = null;
 function renderShared() {
   const scs = getSc(), el = document.getElementById('shared-list'); if (!el) return;
-  if (!scs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">ð§</div><p>Nessun ingrediente bulk.</p></div>`; return; }
+  if (!scs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">&#129476;</div><p>Nessun ingrediente bulk.</p></div>`; return; }
   const evs = getEv();
   el.innerHTML = scs.map(sc => {
     const n = sc.eids?.length || 0;
@@ -1038,7 +1038,7 @@ function openSharedForm(id) {
   editScId = id || null;
   const sc = id ? getSc().find(x => x.id === id) : null;
   const evs = getEv().sort((a, b) => b.data.localeCompare(a.data));
-  const SCATS = ['ð¥© Carne/Pesce', 'ð§ Spezie/Condimenti', 'ð« Olio/Aceto', 'ð· Vino/Alcolici', 'ð¥ Latticini', 'ð¾ Cereali/Farine', 'ð« Conserve', 'ð¦ Altro'];
+  const SCATS = ['ð¥© Carne/Pesce', '&#129476; Spezie/Condimenti', 'ð« Olio/Aceto', '&#127863; Vino/Alcolici', 'ð¥ Latticini', '&#127806; Cereali/Farine', 'ð« Conserve', '&#128230; Altro'];
   const usedPct = sc?.usedPct != null ? sc.usedPct : 100;
   const evList = evs.slice(0, 30).map(ev => `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
     <input type="checkbox" id="scEv-${ev.id}" ${sc?.eids?.includes(ev.id) ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--purple);flex-shrink:0">
@@ -1058,7 +1058,7 @@ function openSharedForm(id) {
   <div class="btn-row" style="margin-top:16px">
     ${sc ? `<button class="btn btn-danger btn-sm" onclick="delSc('${sc.id}')">ð</button>` : ''}
     <button class="btn btn-ghost" onclick="closeOv('sc-ov')">Annulla</button>
-    <button class="btn btn-purple" style="flex:2" onclick="saveSc()">ð¾ Salva</button>
+    <button class="btn btn-purple" style="flex:2" onclick="saveSc()">&#128190; Salva</button>
   </div>`;
   openOv('sc-ov');
 }
@@ -1088,7 +1088,7 @@ function renderGuests() {
   const gs = getGs(), q = (document.getElementById('guest-search')?.value || '').toLowerCase();
   const filt = gs.filter(g => !q || (g.name || '').toLowerCase().includes(q));
   const el = document.getElementById('guest-list'); if (!el) return;
-  if (!filt.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">ð¥</div><p>${q ? 'Nessun risultato' : 'Nessun ospite ancora'}</p></div>`; return; }
+  if (!filt.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">&#128101;</div><p>${q ? 'Nessun risultato' : 'Nessun ospite ancora'}</p></div>`; return; }
   const evs = getEv();
   el.innerHTML = filt.sort((a, b) => (a.name || '').localeCompare(b.name)).map(g => {
     const visits = evs.filter(e => (e.guests || []).some(wg => wg.gid === g.id)).length;
@@ -1096,7 +1096,7 @@ function renderGuests() {
       <div class="g-av">${(g.name || '?')[0].toUpperCase()}</div>
       <div style="flex:1;min-width:0"><div class="g-name">${esc(g.name)}</div>
       <div class="g-meta">${[g.phone, g.instagram].filter(Boolean).join(' Â· ')}${visits ? ` Â· ${visits} serate` : ''}</div>
-      ${g.restrictions ? `<div class="g-restrict">â ï¸ ${esc(g.restrictions)}</div>` : ''}</div></div>`;
+      ${g.restrictions ? `<div class="g-restrict">&#9888;&#65039; ${esc(g.restrictions)}</div>` : ''}</div></div>`;
   }).join('');
 }
 function openGuestForm(id) {
@@ -1109,9 +1109,9 @@ function openGuestForm(id) {
   <div class="form-group"><label>Instagram</label><input type="text" id="gf-ig" value="${esc(g?.instagram || '')}"></div>
   <div class="form-group"><label>Intolleranze / Restrizioni</label><input type="text" id="gf-r" value="${esc(g?.restrictions || '')}"></div>
   <div class="btn-row">
-    ${g ? `<button class="btn btn-danger btn-sm" onclick="delGuest('${g.id}')">ð</button>` : ''}
+    ${g ? `<button class="btn btn-danger btn-sm" onclick="delGuest('${g.id}')">&#128465;</button>` : ''}
     <button class="btn btn-ghost" onclick="closeOv('gform-ov')">Annulla</button>
-    <button class="btn btn-gold" style="flex:2" onclick="saveGuest()">ð¾ Salva</button>
+    <button class="btn btn-gold" style="flex:2" onclick="saveGuest()">&#128190; Salva</button>
   </div>`;
   openOv('gform-ov');
 }
@@ -1136,14 +1136,14 @@ function openGuestDet(id) {
   document.getElementById('gdet-body').innerHTML = `
   <div class="sheet-title">${esc(g.name)}</div>
   <div class="card-sm" style="margin-bottom:12px">
-    ${g.phone ? `<div style="padding:4px 0;font-size:14px">ð ${esc(g.phone)}</div>` : ''}
-    ${g.instagram ? `<div style="padding:4px 0;font-size:14px">ð· ${esc(g.instagram)}</div>` : ''}
-    ${g.restrictions ? `<div style="padding:4px 0;font-size:14px;color:var(--red)">â ï¸ ${esc(g.restrictions)}</div>` : ''}
+    ${g.phone ? `<div style="padding:4px 0;font-size:14px">&#128222; ${esc(g.phone)}</div>` : ''}
+    ${g.instagram ? `<div style="padding:4px 0;font-size:14px">&#128247; ${esc(g.instagram)}</div>` : ''}
+    ${g.restrictions ? `<div style="padding:4px 0;font-size:14px;color:var(--red)">&#9888;&#65039; ${esc(g.restrictions)}</div>` : ''}
     <div style="padding:4px 0;font-size:14px">${evs.length} serate</div>
   </div>
   ${evs.length ? `<div class="sec-label">Serate</div>${evs.map(ev => `<div class="card-sm" style="margin-bottom:6px"><strong>${fmtD(ev.data)}</strong> ${ev.nome ? 'Â· ' + esc(ev.nome) : ''}</div>`).join('')}` : ''}
   <div class="btn-row"><button class="btn btn-ghost" onclick="closeOv('gdet-ov')">Chiudi</button>
-  <button class="btn btn-gold" style="flex:2" onclick="closeOv('gdet-ov');openGuestForm('${g.id}')">âï¸ Modifica</button></div>`;
+  <button class="btn btn-gold" style="flex:2" onclick="closeOv('gdet-ov');openGuestForm('${g.id}')">&#9999;&#65039; Modifica</button></div>`;
   openOv('gdet-ov');
 }
 
@@ -1151,17 +1151,17 @@ function openGuestDet(id) {
 let chatReady = false, chatHistory = [];
 function initChat() {
   chatReady = true;
-  document.getElementById('chat-msgs').innerHTML = `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble">Ciao! Sono l'assistente di SupperApp. Come posso aiutarti?</div></div>`;
+  document.getElementById('chat-msgs').innerHTML = `<div class="chat-msg ai"><div class="chat-av">&#129302;</div><div class="bubble">Ciao! Sono l'assistente di SupperApp. Come posso aiutarti?</div></div>`;
 }
 async function sendChat() {
   const inp = document.getElementById('chat-in');
   const msg = inp?.value?.trim(); if (!msg) return;
   inp.value = '';
   const cfg = getCfg();
-  if (!cfg.key) { alert('Inserisci la tua API key OpenAI nelle Impostazioni âï¸'); return; }
+  if (!cfg.key) { alert('Inserisci la tua API key OpenAI nelle Impostazioni &#9881;&#65039;'); return; }
   const el = document.getElementById('chat-msgs');
   el.innerHTML += `<div class="chat-msg user"><div class="bubble">${esc(msg)}</div></div>`;
-  el.innerHTML += `<div class="chat-msg ai" id="typing"><div class="chat-av">ð¤</div><div class="bubble"><div class="typing-bubble"><span></span><span></span><span></span></div></div></div>`;
+  el.innerHTML += `<div class="chat-msg ai" id="typing"><div class="chat-av">&#129302;</div><div class="bubble"><div class="typing-bubble"><span></span><span></span><span></span></div></div></div>`;
   el.scrollTop = el.scrollHeight;
   chatHistory.push({ role: 'user', content: msg });
   try {
@@ -1173,15 +1173,15 @@ async function sendChat() {
     const data = await r.json();
     document.getElementById('typing')?.remove();
     if (data.error) {
-      el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble" style="color:var(--red)">â ${esc(data.error.message)}</div></div>`;
+      el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">&#129302;</div><div class="bubble" style="color:var(--red)">&#10060; ${esc(data.error.message)}</div></div>`;
     } else {
       const reply = data.choices?.[0]?.message?.content || 'Nessuna risposta';
       chatHistory.push({ role: 'assistant', content: reply });
-      el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble">${esc(reply)}</div></div>`;
+      el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">&#129302;</div><div class="bubble">${esc(reply)}</div></div>`;
     }
   } catch (e) {
     document.getElementById('typing')?.remove();
-    el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">ð¤</div><div class="bubble" style="color:var(--red)">â ${esc(e.message)}</div></div>`;
+    el.innerHTML += `<div class="chat-msg ai"><div class="chat-av">&#129302;</div><div class="bubble" style="color:var(--red)">&#10060; ${esc(e.message)}</div></div>`;
   }
   el.scrollTop = el.scrollHeight;
 }
@@ -1214,7 +1214,7 @@ function showApp() {
 if (!isConfigured) {
   document.getElementById('loading-screen').innerHTML = `
     <div style="max-width:400px;text-align:center;padding:24px">
-      <div style="font-size:52px;margin-bottom:16px">ð§</div>
+      <div style="font-size:52px;margin-bottom:16px">&#128295;</div>
       <h2 style="color:var(--accent);margin-bottom:12px">Setup Firebase</h2>
       <div style="color:var(--sub);font-size:14px;line-height:1.8;text-align:left">
         <p style="margin-bottom:16px">Per usare SupperApp, devi configurare un progetto Firebase:</p>
